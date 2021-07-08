@@ -153,9 +153,13 @@ class ICM20602(object):
         # exit sleep mode
         self.write(self.REG_PWR_MGMT_1, [0x01])
 
+        # delay to allow sensors to start up and stabilize
+        time.sleep(0.1)
+
     def reset(self):
         self.write(self.REG_PWR_MGMT_1, [0x80])
         time.sleep(0.01)
+        # device reset bit is cleared when device reset is complete
         return self.readbyte(self.REG_PWR_MGMT_1) == 0x41
 
     def read_id(self):
