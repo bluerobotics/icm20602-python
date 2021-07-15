@@ -2,28 +2,77 @@
 
 import argparse
 from icm20602 import ICM20602
+from llogger import LLogger
 import signal
 import time
 
-parser = argparse.ArgumentParser(description='ads1115 test')
+parser = argparse.ArgumentParser(description='icm20602 test')
 parser.add_argument('--output', action='store', type=str, default=None)
 parser.add_argument('--frequency', action='store', type=int, default=None)
 args = parser.parse_args()
 
-icm = ICM20602()
 
-outfile = None
+LLOG_ERROR = 0
+# read only memory + factory calibration and serialization type information
+LLOG_ROM = 1
+# application-specific configuration information
+LLOG_CONFIG = 2
+# measurement data
+LLOG_DATA = 4
+# calibration data
+LLOG_CALIBRATION = 5
 
-if args.output:
-    outfile = open(args.output, "w")
+categories = {
+    LLOG_ERROR: {
+        'name': 'error',
+        'columns': [
+            ['error code', '-']
+        ]
+    },
+    LLOG_ROM: {
+        'name': 'rom',
+        'columns': [
+            ['month', '-'],
+            ['day', '-'],
+            ['year', '-'],
+            ['pmin', 'bar'],
+            ['pmax', 'bar'],
+            ['pmode', '[PA,PR,PAA]']
+        ]
+    },
+    LLOG_DATA: {
+        'name': 'measurement',
+        'columns': [
+            ['ax', 'g'],
+            ['ay', 'g'],
+            ['az', 'g'],
+            ['gx', 'dps'],
+            ['gy', 'dps'],
+            ['gz', 'dps'],
+            ['temperature', 'C'],
+            ['ax_raw', 'g'],
+            ['ay_raw', 'g'],
+            ['az_raw', 'g'],
+            ['gx_raw', 'dps'],
+            ['gy_raw', 'dps'],
+            ['gz_raw', 'dps'],
+            ['temperature_raw', 'C'],
+        ],
+        'formatter':
+    },
+}
+
+log = LLogger(categories, console=True, logfile=args.output)
 
 def cleanup(_signo, _stack):
-    if outfile:
-        outfile.close()
+    log.close()
     exit(0)
 
 signal.signal(signal.SIGTERM, cleanup)
 signal.signal(signal.SIGINT, cleanup)
+
+
+icm = ICM20602()
 
 while True:
     data = icm.read_all()
