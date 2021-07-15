@@ -109,7 +109,7 @@ class LLogger():
 
         if self.logfile:
             self.logfile = open(self.logfile, 'w')
-            self.logfile.write(json.dumps(categories, indent=2, sort_keys=True) + '\n')
+            self.logfile.write(json.dumps(categories, indent=2, sort_keys=True, default=lambda o: '') + '\n')
     
     def log(self, type, data):
         t = time.time()
@@ -119,8 +119,8 @@ class LLogger():
             raise e
 
         try:
-            data = category.format(data)
-        except AttributeError:
+            data = category['format'](data)
+        except KeyError:
             pass
 
         logstring = f'{t:.6f} {type} {data}\n'
