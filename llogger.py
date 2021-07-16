@@ -68,7 +68,7 @@ class LLogReader():
         return self.dataByKey(self.metaName2Key(name))
 
     
-    def plot(self, name, y1, y2=None, kind='plot'):
+    def plot(self, name, y1, y2=None):
         df = self.dataByName(name)
 
         ax = plt.gca()
@@ -91,5 +91,8 @@ class LLogReader():
             ax2.set_ylabel(clabel)
             ax2.legend(loc="upper right")
 
+    def pplot(self, x, y1, y2=None):
+        ax = plt.gca()
+        ax.plot(x, y1,  marker='x', markersize=2)
 # reader = LLogReader('/home/jacob/asdf')
 # reader.plot('measurement', ['temperature'], ['temperature', 'pressure'])

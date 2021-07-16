@@ -1,0 +1,10 @@
+0,error,error message
+0,columns,gx,gy,gz,t
+0,units,dps,dps,dps
+0,color,red,black,green
+
+0.0, 0, 10, 20, 30, 100
+0.1, 0, 11, 21, 31, 102
+0.2, 0, 12, 22, 31, 102
+0.3, 0, 13, 23, 31, 102
+0.4, 0, 14, 24, 31, 110

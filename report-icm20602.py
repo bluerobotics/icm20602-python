@@ -27,10 +27,13 @@ args = parser.parse_args()
 
 log = LLogReader(args.input)
 
-log.plot('measurement', ['gx', 'gy', 'gz'], ['ax', 'ay', 'az'])
-log.plot('measurement', ['ax', 'ay', 'az'], ['temperature'])
-log.plot('measurement', ['gx', 'gy', 'gz'], ['temperature'])
-log.plot('measurement', ['gx', 'gy', 'gz'], ['temperature'])
+# log.plot('measurement', ['gx', 'gy', 'gz'], ['ax', 'ay', 'az'])
+# log.plot('measurement', ['ax', 'ay', 'az'], ['temperature'])
+# log.plot('measurement', ['gx', 'gy', 'gz'], ['temperature'])
+# log.plot('measurement', ['gx', 'gy', 'gz'], ['temperature'])
+m = log.dataByName('measurement')
+
+log.pplot(m['time'], m[['ax', 'gy']])
 plt.show()
 # data = pd.read_csv(args.input, header=None, sep=' ')
 # data.rename(columns={0: "Timestamp", 1: "Log_Type"}, inplace=True)
