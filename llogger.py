@@ -68,11 +68,14 @@ class LLogReader():
         return self.dataByKey(self.metaName2Key(name))
 
     
-    def plot(self, name, y1, y2=None):
+    def plot(self, name, y1, y2=None, kind='plot'):
         df = self.dataByName(name)
 
+        ax = plt.gca()
 
-        ax = df.plot(x='time', y=y1)
+        ax = df.plot(x='time', y=y1, marker='x', markersize=2)
+        # for y in y1:
+        #     ax.plot(kind=kind, x='time', y=y)
         cidx = df.columns.get_loc(y1[0])
         cmeta = self.metaByName(name)['columns'][cidx]
         clabel = f'{cmeta[0]} ({cmeta[1]})'
@@ -81,90 +84,12 @@ class LLogReader():
         if y2 is not None:
             ax2 = ax.twinx()
 
-            df.plot(x='time', y=y2, ax=ax2, cmap=plt.cm.get_cmap())
+            df.plot(x='time', y=y2, marker='x', markersize=2, ax=ax2, cmap=plt.cm.get_cmap())
             cidx = df.columns.get_loc(y2[0])
             cmeta = self.metaByName(name)['columns'][cidx]
             clabel = f'{cmeta[0]} ({cmeta[1]})'
             ax2.set_ylabel(clabel)
             ax2.legend(loc="upper right")
-
-    def scatter(self, name, y1, y2=None):
-
-        colors = [
-            "#FFA630",
-            "#4DA1A9",
-            "#611C35",
-            "#2E5077",
-            "#D7E8BA",
-            ]
-        markers = [
-            '+',
-            'x',
-            'o',
-            '*',
-            '.',
-        ]
-        df = self.dataByName(name)
-        meta = self.metaByName(name)
-        if len(args):
-            # this doesn't work for some reason, so the time needs to stay in it's own column
-            # p = df.plot.scatter(x=df.index.to_list(), y=args[0], color=colors[0], marker=markers[0])
-
-            arg = args[0]
-            axn = None
-            for data in arg:
-                p = df.plot.scatter(x='time', y=data, color=colors[0], marker=markers[0], ax=axn)
-                p = df.plot.scatter(x='time', y=data, color=colors[0], marker=markers[0], ax=axn)
-
-                if axn is None:
-                    print('axn')
-                    axn = p.twinx()
-            # p = df.plot.scatter(x='time', y=args[0], color=colors[0], marker=markers[0])
-
-            n=1
-            if len(args) > 1:
-                for arg in args[1:]:
-                    axn = p.twinx()
-                    for data in arg:
-                        df.plot.scatter(x='time', y=data, ax=axn, color=colors[n], marker=markers[n])
-                        n += 1
-        else:
-            df.plot()
-
-
-
-class LLogger():
-    def __init__(self, categories, console=True, logfile=None):
-        self.categories = categories
-        self.logfile = logfile
-        self.console = console
-
-        if self.logfile:
-            self.logfile = open(self.logfile, 'w')
-            self.logfile.write(json.dumps(categories, indent=2, sort_keys=True, default=lambda o: '') + '\n')
-    
-    def log(self, type, data):
-        t = time.time()
-        try:
-            category = self.categories[type]
-        except Exception as e:
-            raise e
-
-        try:
-            data = category['format'](data)
-        except KeyError:
-            pass
-
-        logstring = f'{t:.6f} {type} {data}\n'
-        if self.console:
-            print(logstring, end='')
-        if self.logfile:
-            self.logfile.write(logstring)
-        
-    def close(self):
-        if self.logfile:
-            self.logfile.close()
-
 
 # reader = LLogReader('/home/jacob/asdf')
 # reader.plot('measurement', ['temperature'], ['temperature', 'pressure'])
