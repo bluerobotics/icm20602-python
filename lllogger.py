@@ -97,11 +97,20 @@ class LLogReader:
 
     def dfByName(self, name):
         for key,value in self.meta.items():
-            print(key, value)
-            try:
-                if(value['type'][0] == name):
-                    return self.df[self.df[1] == key]
-            except:
-                pass
+            # try:...
+            if(value['type'][0] == name):
+                df = self.df[self.df[1] == key]
+                #todo omit type
+                for key, value in value.items():
+                    for c in df.loc[:, 2:]:
+                        # we subtract 2, timestamp and type
+                        # this is the column name/index
+                        c = c-2
+                        print(f'adding key {key} to {c}')
+                        # df[c][key] = value[c]
+                        setattr(df[c], key, value[c])
+                return df
+
 
 ll = LLogReader('bme.csv')
+ll.dfByName('data')
