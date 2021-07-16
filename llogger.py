@@ -61,13 +61,34 @@ class LLogReader():
             ccolumns[i+2] = columns[i][0]
         
         # https://stackoverflow.com/a/31495326
-        return df.rename(columns=ccolumns).dropna(axis=1).astype(float)
+        return df.rename(columns=ccolumns).dropna(axis='columns').astype(float)
 
     def dataByName(self, name):
 
         return self.dataByKey(self.metaName2Key(name))
 
-    def scatter(self, name, *args):
+    
+    def plot(self, name, y1, y2=None):
+        df = self.dataByName(name)
+
+
+        ax = df.plot(x='time', y=y1)
+        cidx = df.columns.get_loc(y1[0])
+        cmeta = self.metaByName(name)['columns'][cidx]
+        clabel = f'{cmeta[0]} ({cmeta[1]})'
+        ax.set_ylabel(clabel)
+        ax.legend(loc="upper left")
+        if y2 is not None:
+            ax2 = ax.twinx()
+
+            df.plot(x='time', y=y2, ax=ax2, cmap=plt.cm.get_cmap())
+            cidx = df.columns.get_loc(y2[0])
+            cmeta = self.metaByName(name)['columns'][cidx]
+            clabel = f'{cmeta[0]} ({cmeta[1]})'
+            ax2.set_ylabel(clabel)
+            ax2.legend(loc="upper right")
+
+    def scatter(self, name, y1, y2=None):
 
         colors = [
             "#FFA630",
@@ -93,6 +114,8 @@ class LLogReader():
             axn = None
             for data in arg:
                 p = df.plot.scatter(x='time', y=data, color=colors[0], marker=markers[0], ax=axn)
+                p = df.plot.scatter(x='time', y=data, color=colors[0], marker=markers[0], ax=axn)
+
                 if axn is None:
                     print('axn')
                     axn = p.twinx()

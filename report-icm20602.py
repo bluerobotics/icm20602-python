@@ -27,8 +27,8 @@ args = parser.parse_args()
 
 log = LLogReader(args.input)
 
-log.scatter('measurement', ['ax', 'ay', 'az'], ['gx', 'gy', 'gz'])
-log.scatter('measurement', ['gx', 'gy', 'gz'])
+log.plot('measurement', ['gx', 'gy', 'gz'], ['ax', 'ay', 'az'])
+log.plot('measurement', ['gx', 'gy', 'gz'])
 plt.show()
 # data = pd.read_csv(args.input, header=None, sep=' ')
 # data.rename(columns={0: "Timestamp", 1: "Log_Type"}, inplace=True)
