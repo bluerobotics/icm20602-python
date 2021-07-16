@@ -108,7 +108,7 @@ class LLogReader:
                         # we subtract 2, timestamp and type
                         # this is the column name/index
                         c = c-2
-                        print(f'adding key {key} to {c}')
+                        # print(f'adding key {key} to {c}')
                         # df[c][key] = value[c]
                         if key == 'name':
                             ccolumns = {}
@@ -119,8 +119,8 @@ class LLogReader:
                             # df.rename(columns={c+2:value[c]}, inplace=True)
                         else:
                             setattr(df[c], key, value[c])
-                return df.rename(columns=ccolumns).dropna(axis='columns').astype(float)
-    # def plot(self, x1, y1, y2=None):
+                return df.rename(columns=ccolumns).dropna(axis='columns', how='all').astype(float)
+
 
 
 ll = LLogReader('bme.csv')
