@@ -58,6 +58,7 @@ class LLogReader():
         # transform our tuple list into a dictionary for pandas df.rename
         ccolumns = {}
         for i in range(len(columns)):
+            print(i)
             ccolumns[i+2] = columns[i][0]
         
         # https://stackoverflow.com/a/31495326

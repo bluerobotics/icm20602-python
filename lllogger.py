@@ -100,6 +100,8 @@ class LLogReader:
             # try:...
             if(value['type'][0] == name):
                 df = self.df[self.df[1] == key]
+
+                # df.rename(mapper=lambda i: value['label'][i-2], axis='columns')
                 #todo omit type
                 for key, value in value.items():
                     for c in df.loc[:, 2:]:
@@ -108,9 +110,21 @@ class LLogReader:
                         c = c-2
                         print(f'adding key {key} to {c}')
                         # df[c][key] = value[c]
-                        setattr(df[c], key, value[c])
-                return df
+                        if key == 'name':
+                            ccolumns = {}
+                            print(value)
+                            for i in range(len(value)):
+                                print(i)
+                                ccolumns[i+2] = value[i]
+                            # df.rename(columns={c+2:value[c]}, inplace=True)
+                        else:
+                            setattr(df[c], key, value[c])
+                return df.rename(columns=ccolumns).dropna(axis='columns').astype(float)
+    # def plot(self, x1, y1, y2=None):
 
 
 ll = LLogReader('bme.csv')
-ll.dfByName('data')
+df = ll.dfByName('data')
+ax = df[['gx', 't']].plot()
+df[['gx', 'gy', 'gz']].plot(secondary_y=True, ax=ax)
+plt.show()

@@ -1,11 +1,11 @@
 ### llog v0.0.1 ###
 ,,,,,,,,,,,,,,,,,,,,,
 0,type,data
-0,label,gx,gy,gz,t
+0,name,gx,gy,gz,t
 0,units,dps,dps,dps
 0,color,red,black,green
 1,type,error
-1,label,errno,message
+1,name,errno,message
 ### llog v0.0.1 ###
 ,,,,,,,,,,,,,,,,,,,,,
 1626328252.168738,1,555,hello
