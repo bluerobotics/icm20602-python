@@ -38,12 +38,14 @@ class LLogReader:
             data = f.read()
 
         sio = StringIO(data)
-        sio.readline()
+        # print('hello?', sio.readline())
         print('fuck')
         print(data)
-        df = pd.read_csv(sio, header=None, sep=',')
+        # holy shit this doesn't work if the number is not an epoch timestamp
+        df = pd.read_csv(sio, sep=' ', header=None, error_bad_lines=False)
 
         print(df)
+        self.df = df
         # print('ffuck')
         # print(data)
         # print(df)
