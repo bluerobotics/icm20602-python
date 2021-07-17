@@ -101,30 +101,48 @@ class LLogReader:
             if(value['type'][0] == name):
                 df = self.df[self.df[1] == key]
 
-                # df.rename(mapper=lambda i: value['label'][i-2], axis='columns')
+                # rename columns
+                df.rename(columns={0:'time', 1:'logtype'}, inplace=True)
+
+                names = value['name']
+                for i in range(len(names)):
+                    df.rename(columns={i+2:names[i]}, inplace=True)
+                
                 #todo omit type
                 for key, value in value.items():
-                    for c in df.loc[:, 2:]:
+
+                    for c in range(len(df.columns)):
+
                         # we subtract 2, timestamp and type
                         # this is the column name/index
-                        c = c-2
                         # print(f'adding key {key} to {c}')
                         # df[c][key] = value[c]
                         if key == 'name':
-                            ccolumns = {}
-                            print(value)
-                            for i in range(len(value)):
-                                print(i)
-                                ccolumns[i+2] = value[i]
-                            # df.rename(columns={c+2:value[c]}, inplace=True)
+                            pass
+                            # ccolumns = {}
+                            # for i in range(len(value)):
+                            #     ccolumns[i+2] = value[i]
+                            # # df.rename(columns={c+2:value[c]}, inplace=True)
+                            # df.rename(columns=ccolumns, inplace=True)
                         else:
-                            setattr(df[c], key, value[c])
-                return df.rename(columns=ccolumns).dropna(axis='columns', how='all').astype(float)
+                            print(f'setting {key} {value[c]}')
+                            setattr(df[c+2], key, value[c])
+                            print('DF!', getattr(df[c], key))
+                            # df[c].attrs['hi'] = 'bye'
+                # df.rename(columns=ccolumns, inplace=True).dropna(axis='columns', how='all').astype(float)
+                print(df[1].attrs['hi'])
 
+                print(df[1])
+                print(df[1].attrs['hi'])
+                print('DF!', getattr(df[1], 'units'))
+                print(df['gy'].units)
+                return df
 
 
 ll = LLogReader('bme.csv')
 df = ll.dfByName('data')
 ax = df[['gx', 't']].plot()
+ax.set_ylabel(df['gx'].units)
 df[['gx', 'gy', 'gz']].plot(secondary_y=True, ax=ax)
+
 plt.show()
