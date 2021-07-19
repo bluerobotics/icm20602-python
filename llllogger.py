@@ -10,6 +10,42 @@ import time
 import typing
 from io import StringIO
 
+# class LLAxis:
+@pd.api.extensions.register_series_accessor("ll")
+class LLAxis:
+    def __init__(self, pandas_obj):
+        self._obj = pandas_obj
+
+    def plot(self, ax=None):
+        meta = pressure.attrs['llMeta']
+
+
+        name = meta['name']
+        units = meta['units']
+        color = meta['color']
+        marker = meta['marker']
+        if ax is None:
+
+            ax = self._obj.plot(c=color, marker=marker)
+
+        else:
+            ax = self._obj.plot(c=color, marker=marker, secondary_y=True, mark_right=False, ax=ax)
+        ax.set_ylabel(f'{name} ({units})')
+        return ax
+    # def subplot(self, ax):
+    #     meta = pressure.attrs['llMeta']
+
+
+    #     name = meta['name']
+    #     units = meta['units']
+    #     color = meta['color']
+    #     marker = meta['marker']
+    #     ax = self._obj.plot(c=color, marker=marker)
+    #     ax.set_ylabel(f'{name} ({units})')
+
+
+
+
 # frozen (read only)?
 @dataclass
 class LLogDesc:
@@ -20,7 +56,6 @@ class LLogDesc:
         setattr(self, 'n', 2)
         self.df = pd.read_csv(self.data, sep=',', header=None)
 
-# class LLAxis:
 
 class LLogReader:
     def __init__(self, logfile, metafile):
@@ -56,7 +91,6 @@ class LLogReader:
                     name = columns[c]['name']
                     value[name].attrs['llMeta'] = columns[c]
                 
-
             
             except ValueError:
                 # 'could not convert stringt o flouat'
@@ -107,7 +141,7 @@ marker = meta['marker']
 ax = pressure.plot(c=color)
 ax.set_ylabel(f'{name} ({units})')
 
-
+# https://pandas.pydata.org/pandas-docs/stable/development/extending.html
 temperature = data.temperature
 
 meta = temperature.attrs['llMeta']
