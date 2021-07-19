@@ -37,33 +37,21 @@ class LLogReader:
             value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
             try:
                 columns = llDesc['columns']
-
                 for c in range(len(columns)):
                     i = c + 2
                     print(f'renaming {i}, {columns[c]["name"]}')
-                    # print('!@!@!@', value[i].attrs)
-                    # value[i].attrs['llMeta'] = columns[c]
-                    # print('UUUUUUUUUUUs', value[i].attrs)
                     name = columns[c]['name']
                     value.rename(columns={i: name}, inplace=True)
-                    # print('!@!@!@', value[name].attrs)
-                    # value[name].attrs['llMeta'] = columns[c]
-                    # print('UUUUUUUUUUUs', value[name].attrs)
-                    # value.attrs['llMeta'] = columns[c]
                 for c in range(len(columns)):
                     name = columns[c]['name']
                     value[name].attrs['llMeta'] = columns[c]
-
-                # value.attrs['llMeta'] = 
             except KeyError:
                 print(f'{attr} does not have columns definition')
+
+            # eg for each type name in log, set self.type to
+            # the dataframe representing only that type
             print(f'setting {attr} to \n{value}')
             setattr(self, attr, value)
-
-            # set attr metadata!!!
-
-
-
 
     def metaOpen(self, metafile):
         print(metafile)
