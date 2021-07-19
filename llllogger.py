@@ -10,6 +10,19 @@ import time
 import typing
 from io import StringIO
 
+# the fields that are expected to be present in metadata
+llRequired = [
+    'name'
+]
+
+llOptional = {
+    #todo random
+    'color': 'black',
+    'marker': 'x',
+    'marker_size': 2,
+    'units': '',
+    'dtype': float
+}
 # class LLAxis:
 # https://pandas.pydata.org/pandas-docs/stable/development/extending.html
 @pd.api.extensions.register_series_accessor("ll")
@@ -19,22 +32,11 @@ class LLAxis:
 
     def plot(self, ax=None):
         meta = self._obj.attrs['llMeta']
-        print('got meta')
-        print(meta)
         name = meta['name']
-        try:
-            units = f'({meta["units"]})'
-        except KeyError:
-            units = ''
-        try:
-            color = f'{meta["color"]}'
-        except KeyError:
-            # todo random, or colormap
-            color = 'black'
-        try:
-            marker = f'{meta["marker"]}'
-        except KeyError:
-            marker = 'x'
+        units = f' {meta["units"]}'
+        color = f'{meta["color"]}'
+        marker = f'{meta["marker"]}'
+
         if ax is None:
             ax = self._obj.plot(c=color, marker=marker)
         else:
@@ -69,10 +71,12 @@ class LLogReader:
                 for c in range(len(columns)):
                     name = columns[c]['name']
                     value[name] = value[name].astype(float)
+
                 # attach metadata !! this must be done last
                 for c in range(len(columns)):
                     name = columns[c]['name']
-                    value[name].attrs['llMeta'] = columns[c]
+                    value[name].attrs['llMeta'] = llOptional | columns[c]
+
             except ValueError:
                 # 'could not convert stringt o flouat'
                 print(f'{attr} could not convert string to float')
