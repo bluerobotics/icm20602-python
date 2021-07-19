@@ -32,7 +32,25 @@ class LLogReader:
             # create new view
             # todo make it a dataframe
             DF = self.df
-            setattr(self, llDesc['type'], DF[DF['llType'] == int(llType)])
+
+            attr = llDesc['type']
+            value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
+            try:
+                columns = llDesc['columns']
+
+                for c in range(len(columns)):
+                    print(f'renaming {c+2}, {columns[c]["name"]}')
+                    value.rename(columns={c+2: columns[c]['name']}, inplace=True)
+
+            except KeyError:
+                print(f'{attr} does not have columns definition')
+            print(f'setting {attr} to \n{value}')
+            setattr(self, attr, value)
+
+            # set attr metadata!!!
+
+
+
 
     def metaOpen(self, metafile):
         print(metafile)
