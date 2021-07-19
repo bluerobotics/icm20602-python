@@ -17,31 +17,35 @@ class LLAxis:
         self._obj = pandas_obj
 
     def plot(self, ax=None):
-        meta = pressure.attrs['llMeta']
+        meta = self._obj.attrs['llMeta']
 
-
+        print('got meta')
+        print(meta)
         name = meta['name']
-        units = meta['units']
-        color = meta['color']
-        marker = meta['marker']
+        try:
+            units = f'({meta["units"]})'
+        except KeyError:
+            units = ''
+        
+
+        try:
+            color = f'{meta["color"]}'
+        except KeyError:
+            # todo random, or colormap
+            color = 'black'
+
+        try:
+            marker = f'{meta["marker"]}'
+        except KeyError:
+            marker = 'x'
+
         if ax is None:
-
             ax = self._obj.plot(c=color, marker=marker)
-
         else:
             ax = self._obj.plot(c=color, marker=marker, secondary_y=True, mark_right=False, ax=ax)
-        ax.set_ylabel(f'{name} ({units})')
+        ax.set_ylabel(f'{name}{units}')
         return ax
-    # def subplot(self, ax):
-    #     meta = pressure.attrs['llMeta']
 
-
-    #     name = meta['name']
-    #     units = meta['units']
-    #     color = meta['color']
-    #     marker = meta['marker']
-    #     ax = self._obj.plot(c=color, marker=marker)
-    #     ax.set_ylabel(f'{name} ({units})')
 
 
 
@@ -162,3 +166,9 @@ print(temperature)
 # df[['gx', 'gy', 'gz']].plot(secondary_y=True, ax=ax)
 
 # plt.show()
+
+ax = pressure.ll.plot()
+data.pressure_raw.ll.plot()
+temperature.ll.plot(ax)
+
+plt.show()
