@@ -20,6 +20,8 @@ class LLogDesc:
         setattr(self, 'n', 2)
         self.df = pd.read_csv(self.data, sep=',', header=None)
 
+# class LLAxis:
+
 class LLogReader:
     def __init__(self, logfile, metafile):
         self.meta = self.metaOpen(metafile)
@@ -35,23 +37,43 @@ class LLogReader:
 
             attr = llDesc['type']
             value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
+
             try:
+
                 columns = llDesc['columns']
                 for c in range(len(columns)):
                     i = c + 2
                     print(f'renaming {i}, {columns[c]["name"]}')
                     name = columns[c]['name']
                     value.rename(columns={i: name}, inplace=True)
+                # convert numeric fields to float
+                for c in range(len(columns)):
+                    name = columns[c]['name']
+                    value[name] = value[name].astype(float)
+                
+                # attach metadata !! this must be done last
                 for c in range(len(columns)):
                     name = columns[c]['name']
                     value[name].attrs['llMeta'] = columns[c]
+                
+
+            
+            except ValueError:
+                # 'could not convert stringt o flouat'
+                print(f'{attr} could not convert string to float')
+                pass
             except KeyError:
                 print(f'{attr} does not have columns definition')
 
+
+
+
+            
             # eg for each type name in log, set self.type to
             # the dataframe representing only that type
             print(f'setting {attr} to \n{value}')
             setattr(self, attr, value)
+
 
     def metaOpen(self, metafile):
         print(metafile)
@@ -70,6 +92,37 @@ class LLogReader:
 
 ll = LLogReader('bme.csv', 'bme.meta')
 # df = ll.dfByName('data')
+
+data = ll.data
+pressure = data.pressure
+
+meta = pressure.attrs['llMeta']
+name = meta['name']
+units = meta['units']
+color = meta['color']
+marker = meta['marker']
+
+
+# data.plot()
+ax = pressure.plot(c=color)
+ax.set_ylabel(f'{name} ({units})')
+
+
+temperature = data.temperature
+
+meta = temperature.attrs['llMeta']
+name = meta['name']
+units = meta['units']
+color = meta['color']
+marker = meta['marker']
+ax2 = temperature.plot(c=color, secondary_y=True, mark_right=False)
+ax2.set_ylabel(f'{name} ({units})')
+
+plt.show()
+
+print(temperature)
+
+
 # ax = df[['gx', 't']].plot()
 # ax.set_ylabel(df['gx'].units)
 # df[['gx', 'gy', 'gz']].plot(secondary_y=True, ax=ax)
