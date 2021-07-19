@@ -54,9 +54,6 @@ class LLogReader:
         self.df['llType'] = self.df['llType'].astype(int)
 
         for llType, llDesc in self.meta.items():
-            # find matching rows
-            # create new view
-            # todo make it a dataframe
             DF = self.df
 
             attr = llDesc['type']
@@ -78,44 +75,56 @@ class LLogReader:
                     except:
                         pass
 
-
                 # attach metadata !! this must be done last
                 for c in range(len(columns)):
                     name = columns[c]['name']
                     value[name].attrs['llMeta'] = llOptional | columns[c]
-                    print(f'attached {llOptional | columns[c]} to llMeta ({name})')
             except ValueError:
                 # 'could not convert stringt o flouat'
                 print(f'{attr} could not convert string to float')
                 pass
             except KeyError:
                 print(f'{attr} does not have columns definition')
+                pass
 
             # eg for each type name in log, set self.type to
             # the dataframe representing only that type
-            print(f'setting {attr} to \n{value}')
             setattr(self, attr, value)
 
     def metaOpen(self, metafile):
-        print(metafile)
         with open(metafile, 'r') as f:
             return json.load(f)
     
     def logOpen(self, logfile):
         return pd.read_csv(logfile,sep=',', header=None).drop(index=0).dropna(axis='columns', how='all')
 
+class LLogWriter:
+    def __init__(self, meta, logfile=None, console=True):
+        self.meta = meta
+        self.logfile = logfile
+        self.console = console
 
-# ll = LLogReader('bme.csv', 'bme.meta')
+        if self.logfile:
+            self.logfile = open(self.logfile, 'w')
+    
+    def log(self, type, data):
+        t = time.time()
+        try:
+            category = self.meta[type]
+        except Exception as e:
+            raise e
 
-# data = ll.data
-# pressure = data.pressure
-# temperature = data.temperature
+        try:
+            data = category['format'](data)
+        except KeyError:
+            pass
 
-# ax = pressure.ll.plot()
-# data.pressure_raw.ll.plot()
-# temperature.ll.plot(ax)
-
-# plt.figure()
-# temperature.ll.plot()
-
-# plt.show()
+        logstring = f'{t:.6f} {type} {data}\n'
+        if self.console:
+            print(logstring, end='')
+        if self.logfile:
+            self.logfile.write(logstring)
+        
+    def close(self):
+        if self.logfile:
+            self.logfile.close()
