@@ -23,6 +23,7 @@ llOptional = {
     'units': '',
     'dtype': float
 }
+
 # class LLAxis:
 # https://pandas.pydata.org/pandas-docs/stable/development/extending.html
 @pd.api.extensions.register_series_accessor("ll")
@@ -31,6 +32,7 @@ class LLAxis:
         self._obj = pandas_obj
 
     def plot(self, ax=None):
+
         meta = self._obj.attrs['llMeta']
         name = meta['name']
         units = f' {meta["units"]}'
@@ -62,7 +64,8 @@ class LLogReader:
 
             try:
                 columns = llDesc['columns']
-                for c in range(len(columns)):
+                l = min(len(columns), len(value.columns))
+                for c in range(l):
                     i = c + 2
                     print(f'renaming {i}, {columns[c]["name"]}')
                     name = columns[c]['name']
@@ -70,13 +73,17 @@ class LLogReader:
                 # convert numeric fields to float
                 for c in range(len(columns)):
                     name = columns[c]['name']
-                    value[name] = value[name].astype(float)
+                    try:
+                        value[name] = value[name].astype(float)
+                    except:
+                        pass
+
 
                 # attach metadata !! this must be done last
                 for c in range(len(columns)):
                     name = columns[c]['name']
                     value[name].attrs['llMeta'] = llOptional | columns[c]
-
+                    print(f'attached {llOptional | columns[c]} to llMeta ({name})')
             except ValueError:
                 # 'could not convert stringt o flouat'
                 print(f'{attr} could not convert string to float')
@@ -98,17 +105,17 @@ class LLogReader:
         return pd.read_csv(logfile,sep=',', header=None).drop(index=0).dropna(axis='columns', how='all')
 
 
-ll = LLogReader('bme.csv', 'bme.meta')
+# ll = LLogReader('bme.csv', 'bme.meta')
 
-data = ll.data
-pressure = data.pressure
-temperature = data.temperature
+# data = ll.data
+# pressure = data.pressure
+# temperature = data.temperature
 
-ax = pressure.ll.plot()
-data.pressure_raw.ll.plot()
-temperature.ll.plot(ax)
+# ax = pressure.ll.plot()
+# data.pressure_raw.ll.plot()
+# temperature.ll.plot(ax)
 
-plt.figure()
-temperature.ll.plot()
+# plt.figure()
+# temperature.ll.plot()
 
-plt.show()
+# plt.show()
