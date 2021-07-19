@@ -1,0 +1,86 @@
+{
+  "0": {
+    "type": "error",
+    "columns": [
+      {
+        "name": "error code",
+        "color": "red",
+        "marker": "o",
+        "dtype": "int"
+      },
+      {
+        "name": "error message",
+        "dtype": "str"
+      }
+    ]
+  },
+  "1": {
+    "type": "rom"
+  },
+  "2": {
+    "type": "configuration",
+    "columns": [
+      {
+        "name": "ctrl register",
+        "units": "bitmap",
+        "bits": {
+          "0": {
+            "name": "ctrl bit 0"
+          },
+          "1": {
+            "name": "ctrl bit 1"
+          }
+        },
+        "dtype": "int",
+        "color": "red",
+        "marker": "o"
+      },
+      {
+        "name": "cfg register",
+        "units": "bitmap",
+        "bits": {
+          "0": {
+            "name": "cfg bit 0"
+          },
+          "1": {
+            "name": "cfg bit 1"
+          }
+        },
+        "dtype": "int",
+        "color": "red",
+        "marker": "o"
+      }
+    ]
+  },
+  "3": {
+    "type": "calibration"
+  },
+  "4": {
+    "type": "data",
+    "columns": [
+      {
+        "name": "pressure",
+        "units": "mbar",
+        "dtype": "float",
+        "color": "red",
+        "marker": "o"
+      },
+      {
+        "name": "temperature",
+        "units": "C",
+        "dtype": "float",
+        "color": "green",
+        "marker": "x",
+        "scalar": 2.0
+      },
+      {
+        "name": "pressure_raw",
+        "dtype": "int"
+      },
+      {
+        "name": "temperature_raw",
+        "dtype": "int"
+      }
+    ]
+  }
+}

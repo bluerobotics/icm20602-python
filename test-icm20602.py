@@ -17,10 +17,11 @@ LLOG_ERROR = 0
 LLOG_ROM = 1
 # application-specific configuration information
 LLOG_CONFIG = 2
+# calibration data
+LLOG_CALIBRATION = 3
 # measurement data
 LLOG_DATA = 4
-# calibration data
-LLOG_CALIBRATION = 5
+
 
 def icmFormat(data):
     return (f'{data.a.x} {data.a.y} {data.a.z} {data.g.x} {data.g.y} {data.g.z} {data.t} '
