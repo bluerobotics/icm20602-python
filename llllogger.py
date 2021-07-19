@@ -39,9 +39,22 @@ class LLogReader:
                 columns = llDesc['columns']
 
                 for c in range(len(columns)):
-                    print(f'renaming {c+2}, {columns[c]["name"]}')
-                    value.rename(columns={c+2: columns[c]['name']}, inplace=True)
+                    i = c + 2
+                    print(f'renaming {i}, {columns[c]["name"]}')
+                    # print('!@!@!@', value[i].attrs)
+                    # value[i].attrs['llMeta'] = columns[c]
+                    # print('UUUUUUUUUUUs', value[i].attrs)
+                    name = columns[c]['name']
+                    value.rename(columns={i: name}, inplace=True)
+                    print('!@!@!@', value[name].attrs)
+                    value[name].attrs['llMeta'] = columns[c]
+                    print('UUUUUUUUUUUs', value[name].attrs)
+                    value.attrs['llMeta'] = columns[c]
+                for c in range(len(columns)):
+                    i = c + 2
+                    value[i].attrs['llMeta'] = columns[c]
 
+                # value.attrs['llMeta'] = 
             except KeyError:
                 print(f'{attr} does not have columns definition')
             print(f'setting {attr} to \n{value}')
