@@ -1,0 +1,154 @@
+{
+  "0": {
+    "type": "error",
+    "columns": [
+      {
+        "name": "error code",
+        "color": "red",
+        "marker": "o",
+        "dtype": "int"
+      },
+      {
+        "name": "error message",
+        "dtype": "str"
+      }
+    ]
+  },
+  "1": {
+    "type": "rom"
+  },
+  "2": {
+    "type": "configuration",
+    "columns": [
+      {
+        "name": "ctrl register",
+        "units": "bitmap",
+        "bits": {
+          "0": {
+            "name": "ctrl bit 0"
+          },
+          "1": {
+            "name": "ctrl bit 1"
+          }
+        },
+        "dtype": "int",
+        "color": "red",
+        "marker": "o"
+      },
+      {
+        "name": "cfg register",
+        "units": "bitmap",
+        "bits": {
+          "0": {
+            "name": "cfg bit 0"
+          },
+          "1": {
+            "name": "cfg bit 1"
+          }
+        },
+        "dtype": "int",
+        "color": "red",
+        "marker": "o"
+      }
+    ]
+  },
+  "3": {
+    "type": "calibration"
+  },
+  "4": {
+    "type": "data",
+    "columns": [
+      {
+        "name": "ax",
+        "units": "g",
+        "dtype": "blue",
+        "color": "orange",
+        "marker": "x"
+      },
+      {
+        "name": "ay",
+        "units": "g",
+        "dtype": "float",
+        "color": "purple",
+        "marker": "x"
+      },
+      {
+        "name": "az",
+        "units": "g",
+        "dtype": "float",
+        "color": "green",
+        "marker": "x"
+      },
+      {
+        "name": "gx",
+        "units": "dps",
+        "dtype": "float",
+        "color": "red",
+        "marker": "o"
+      },
+      {
+        "name": "gyz",
+        "units": "dps",
+        "dtype": "float",
+        "color": "pink",
+        "marker": "o"
+      },
+      {
+        "name": "gz",
+        "units": "dps",
+        "dtype": "float",
+        "color": "orange",
+        "marker": "o"
+      },
+      {
+        "name": "t",
+        "units": "C",
+        "dtype": "float",
+        "color": "yellow",
+        "marker": "."
+      },
+      {
+        "name": "ax_raw",
+        "dtype": "int",
+        "color": "orange",
+        "marker": "x"
+      },
+      {
+        "name": "ay_raw",
+        "dtype": "int",
+        "color": "purple",
+        "marker": "x"
+      },
+      {
+        "name": "az_raw",
+        "dtype": "float",
+        "color": "int",
+        "marker": "x"
+      },
+      {
+        "name": "gx_raw",
+        "dtype": "int",
+        "color": "red",
+        "marker": "o"
+      },
+      {
+        "name": "gyz_raw",
+        "dtype": "int",
+        "color": "pink",
+        "marker": "o"
+      },
+      {
+        "name": "gz_raw",
+        "dtype": "int",
+        "color": "orange",
+        "marker": "o"
+      },
+      {
+        "name": "t_raw",
+        "dtype": "int",
+        "color": "yellow",
+        "marker": "."
+      }
+    ]
+  }
+}
