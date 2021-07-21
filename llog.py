@@ -28,59 +28,116 @@ llOptional = {
     'dtype': float
 }
 
-# https://pandas.pydata.org/pandas-docs/stable/development/extending.html
-@pd.api.extensions.register_series_accessor("ll")
-class LLAxis:
-    def __init__(self, pandas_obj):
-        print(f'LL: {pandas_obj.attrs}')
-        self._obj = pandas_obj
-        self.meta = self._obj.attrs['llMeta']
+# https://stackoverflow.com/questions/47466255/subclassing-a-pandas-dataframe-updates
+class LLogSeries(pd.Series):
+    _metadata = ['meta']
 
-    def plot(self, **kwargs):
-        meta = self._obj.attrs['llMeta']
+    @property
+    def _constructor(self):
+        return LLogSeries
+
+    @property
+    def _constructor_expanddim(self):
+        return LLogDataFrame
+
+    def plot(self, *args, **kwargs):
+        print('plotnig', self.meta)
+        meta = self.meta
+
+        kwargs = meta|kwargs
+        ax = super().plot(*args, **kwargs)
+        ax.legend()
+
         name = meta['name']
         units = f' {meta["units"]}'
-        color = f'{meta["color"]}'
-        marker = f'{meta["marker"]}'
+        # color = f'{meta["color"]}'
+        # marker = f'{meta["marker"]}'
 
-        ax = self._obj.plot(c=color, style=marker, markersize=2, **kwargs)
-        ax.legend()
         ax.set_ylabel(f'{name}{units}')
         return ax
 
-    def pplot(self, y2=None):
-        ax = self.plot()
-        if y2 is not None:
-            y2.ll.plot(ax)
-        return ax
 
-    def ppplot(self):
-        return self._obj
+    
+# https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
+class LLogDataFrame(pd.DataFrame):
+    _metadata = ['meta']
 
-@pd.api.extensions.register_dataframe_accessor("ll")
-class LLDataFrame:
-    def __init__(self, pandas_obj):
-        print(f'DF: {pandas_obj["pressure"].attrs}')
-        self._obj = pandas_obj
-        print(f'DF: {pandas_obj["pressure"].attrs}')
-        print(f'DF: {self._obj["pressure"].attrs}')
+    @property
+    def _constructor(self):
+        return LLogDataFrame
+
+    @property
+    def _constructor_sliced(self):
+        def _c(*args, **kwargs):
+            s = LLogSeries(*args, **kwargs)
+            try:
+                name = kwargs['name']
+                meta = self.meta[name]
+                s.meta = meta
+                print(f'set series meta to {meta}')
+            except:
+                print(f'failure setting series meta {name} {self.meta}')
+                pass
+            return s
+        return _c
+
+    def plot(self, *args, **kwargs):
+        for c in self:
+            self[c].plot(*args, **kwargs)
+
+# # https://pandas.pydata.org/pandas-docs/stable/development/extending.html
+# @pd.api.extensions.register_series_accessor("ll")
+# class LLAxis:
+#     def __init__(self, pandas_obj):
+#         print(f'LL: {pandas_obj.attrs}')
+#         self._obj = pandas_obj
+#         self.meta = self._obj.attrs['llMeta']
+
+#     def plot(self, **kwargs):
+#         meta = self._obj.attrs['llMeta']
+#         name = meta['name']
+#         units = f' {meta["units"]}'
+#         color = f'{meta["color"]}'
+#         marker = f'{meta["marker"]}'
+
+#         ax = self._obj.plot(c=color, style=marker, markersize=2, **kwargs)
+#         ax.legend()
+#         ax.set_ylabel(f'{name}{units}')
+#         return ax
+
+#     def pplot(self, y2=None):
+#         ax = self.plot()
+#         if y2 is not None:
+#             y2.ll.plot(ax)
+#         return ax
+
+#     def ppplot(self):
+#         return self._obj
+
+# @pd.api.extensions.register_dataframe_accessor("ll")
+# class LLDataFrame:
+#     def __init__(self, pandas_obj):
+#         print(f'DF: {pandas_obj["pressure"].attrs}')
+#         self._obj = pandas_obj
+#         print(f'DF: {pandas_obj["pressure"].attrs}')
+#         print(f'DF: {self._obj["pressure"].attrs}')
 
 
 
-    def plot(self, **kwargs):
-        print(f'DFTIME: {self._obj["time"].attrs}')
-        for c, s in self._obj.iteritems():
+#     def plot(self, **kwargs):
+#         print(f'DFTIME: {self._obj["time"].attrs}')
+#         for c, s in self._obj.iteritems():
 
-            # don't process these
-            if c in ['time', 'llType']:
-                continue
+#             # don't process these
+#             if c in ['time', 'llType']:
+#                 continue
 
-            print(f'DF: {c}, {s.attrs}')
-            s.ll.plot(**kwargs)
-            # print(f'DF: {self._obj.pressure.attrs}')
-            # print(f'DF: {self._obj[c].attrs}')
-            # print(f'DF: {self._obj.pressure.attrs}')
-            # self._obj[c].ll.plot(kwargs)
+#             print(f'DF: {c}, {s.attrs}')
+#             s.ll.plot(**kwargs)
+#             # print(f'DF: {self._obj.pressure.attrs}')
+#             # print(f'DF: {self._obj[c].attrs}')
+#             # print(f'DF: {self._obj.pressure.attrs}')
+#             # self._obj[c].ll.plot(kwargs)
 
 
 # @pd.api.extensions.register_dataframe_accessor("pdf")
@@ -122,6 +179,8 @@ class LLogReader:
     def __init__(self, logfile, metafile):
         self.meta = self.metaOpen(metafile)
         self.df = self.logOpen(logfile)
+        self.df.meta = self.meta
+
         self.df.rename(columns={0:'time', 1:'llType'}, inplace=True)
         self.df['llType'] = self.df['llType'].astype(int)
 
@@ -157,10 +216,10 @@ class LLogReader:
                         except:
                             pass
 
-                # attach metadata !! this must be done last
-                for c in range(l):
-                    name = columns[c]['name']
-                    value[name].attrs['llMeta'] = llOptional | columns[c]
+                # # attach metadata !! this must be done last
+                # for c in range(l):
+                #     name = columns[c]['name']
+                #     value[name].attrs['llMeta'] = llOptional | columns[c]
 
             except ValueError:
                 print(f'{attr} could not convert string to float')
@@ -178,7 +237,8 @@ class LLogReader:
             return json.load(f)
     
     def logOpen(self, logfile):
-        return pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        df = pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        return LLogDataFrame(df)
 
 class LLogWriter:
     def __init__(self, meta, logfile=None, console=True):

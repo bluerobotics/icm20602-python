@@ -32,10 +32,10 @@ log = LLogReader(args.input, args.meta)
 
 
 
-log.data['ax', 'ay', 'az'].plot(d2=log.data.t)
+# log.data['ax', 'ay', 'az'].plot(d2=log.data.t)
 
-an = log.data['ax', 'ay', 'az']
-gn = log.data['gx', 'gy', 'gz']
+an = log.data[['ax', 'ay', 'az']]
+gn = log.data[['gx', 'gy', 'gz']]
 t = log.data.t
 
 an.plot(d2=t)
