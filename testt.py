@@ -29,3 +29,18 @@ for i in range(10):
 log.close()
 
 log = ll.LLogReader(output, meta)
+
+da = log.data[['p', 't']]
+dp = log.data['p']
+dt = log.data['t']
+
+## try scaling!
+
+da.plot()
+plt.figure()
+dp.plot()
+plt.figure()
+dt.plot()
+plt.figure()
+
+# log.df['pressure'].plot()

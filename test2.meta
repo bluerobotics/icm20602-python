@@ -12,7 +12,7 @@
     "type": "data",
     "columns": [
       {
-        "name": "pressure",
+        "name": "p",
         "units": "mbar",
         "dtype": "float",
         "color": "orange",

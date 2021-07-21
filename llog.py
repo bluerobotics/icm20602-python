@@ -191,8 +191,8 @@ class LLogReader:
         self.df = self.logOpen(logfile)
         self.df.meta = self.metaOpen(metafile)
 
-        # self.df.rename(columns={0:'time', 1:'llType'}, inplace=True)
-        # self.df['llType'] = self.df['llType'].astype(int)
+        self.df.rename(columns={0:'time', 1:'llType'}, inplace=True)
+        self.df['llType'] = self.df['llType'].astype(int)
 
         # for llType, llDesc in self.meta.items():
         #     DF = self.df
@@ -238,10 +238,24 @@ class LLogReader:
         #     except KeyError:
         #         print(f'{attr} does not have columns definition')
         #         pass
+        # for llType, llDesc in self.meta.items():
+        #     DF = self.df
+
+        #     attr = llDesc['type']
+        #     value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
 
             # eg for each type name in log, set self.type to
             # the dataframe representing only that type
             # setattr(self, attr, value)
+
+        for llType, llDesc in self.df.meta.items():
+            DF = self.df
+
+            attr = llDesc['type']
+            value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
+            # eg for each type name in log, set self.type to
+            # the dataframe representing only that type
+            setattr(self, attr, value)
 
     def metaOpen(self, metafile):
         with open(metafile, 'r') as f:
