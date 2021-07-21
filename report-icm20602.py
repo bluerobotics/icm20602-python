@@ -42,6 +42,18 @@ log.data.t.ll.plot()
 
 plt.figure()
 
+print(f'f1 {log.data["ax"].attrs}')
+
+d1 = log.data
+axn = d1[['ax', 'ay', 'az']]
+
+print(f'f2 {log.data["ax"].attrs}')
+print(axn['ax'].attrs)
+print('')
+for c in axn:
+    print(c)
+    print(axn[c].attrs)
+
 # plot acceleration
 log.data.ay.ll.plot()
 log.data.az.ll.plot()
@@ -59,6 +71,14 @@ log.data.gz.ll.plot()
 plt.twinx()
 log.data.t.ll.plot()
 
+# https://pandas.pydata.org/pandas-docs/stable/user_guide/basics.html#custom-describe
+from functools import partial
+
+q_25 = partial(pd.Series.quantile, q=0.25)
+q_25.name = "25%"
+q_75 = partial(pd.Series.quantile, q=0.75)
+q_75.name = "75%"
+plot.data.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
 
 plt.show()
 
