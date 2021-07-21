@@ -102,6 +102,22 @@ class LLDataFrame:
 #             self._obj[y].ll.plot(ax=ax)
 #         return ax
 
+# class LLogSeries(pd.Series):
+    
+#     _metadata = ['llMeta']
+
+#     @property
+#     def _constructor(self):
+#         self.llMeta = { 'a': 'aasdf', 'b': ';aklj'}
+#         print(self.llMeta)
+#         return LLogSeries
+
+#     def me(self):
+#         print('hello')
+        
+# class LLogDataframe(pd.Dataframe):
+    
+
 class LLogReader:
     def __init__(self, logfile, metafile):
         self.meta = self.metaOpen(metafile)

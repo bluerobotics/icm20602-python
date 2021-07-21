@@ -32,6 +32,27 @@ log = LLogReader(args.input, args.meta)
 
 
 
+log.data['ax', 'ay', 'az'].plot(d2=log.data.t)
+
+an = log.data['ax', 'ay', 'az']
+gn = log.data['gx', 'gy', 'gz']
+t = log.data.t
+
+an.plot(d2=t)
+gn.plot(d2=t)
+t.plot(d2=an)
+
+
+
+
+# with a series, less important
+log.data.ay.plot()
+
+
+# plt.twinx()
+# log.data.plot('t')
+
+
 # plot acceleration
 log.data.ay.ll.plot()
 log.data.az.ll.plot()
@@ -45,7 +66,13 @@ plt.figure()
 
 print(f'f1 {log.data["ax"].attrs}')
 
-d1 = log.data
+log.data.plot()
+an = log.data['ax', 'ay', 'az']
+gn = log.data['gx', 'gy', 'gz']
+t = log.data.temperature
+
+an.plot(t)
+gn.plot(t)
 # axn = d1[['ax', 'ay', 'az']]
 # this doesn't delete original, but doesn't copy
 axn = log.data.loc[:,['ax','ay']]
