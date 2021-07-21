@@ -87,7 +87,7 @@
         "marker": "o"
       },
       {
-        "name": "gyz",
+        "name": "gy",
         "units": "dps",
         "dtype": "float",
         "color": "pink",
@@ -132,7 +132,7 @@
         "marker": "o"
       },
       {
-        "name": "gyz_raw",
+        "name": "gy_raw",
         "dtype": "int",
         "color": "pink",
         "marker": "o"

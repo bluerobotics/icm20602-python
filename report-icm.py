@@ -28,5 +28,9 @@ t = log.data.temperature
 
 ax = p.ll.plot()
 t.ll.plot(ax)
+
+figure()
+log.data.ll.plot(['temperature', 'pressure'], ['temperature'])
+
 plt.show()
 

@@ -3,16 +3,20 @@
 import argparse
 from icm20602 import ICM20602
 from llog import *
+import os
 import signal
 import time
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+defaultMeta = dir_path + '/icm20602.meta'
 
 parser = argparse.ArgumentParser(description='icm20602 test')
 parser.add_argument('--output', action='store', type=str, default=None)
 parser.add_argument('--frequency', action='store', type=int, default=None)
+parser.add_argument('--meta', action='store', type=str, default=defaultMeta)
 args = parser.parse_args()
 
-
-log = LLogWriter(categories, console=True, logfile=args.output)
+log = LLogWriter(args.meta, args.output)
 
 def cleanup(_signo, _stack):
     log.close()
@@ -34,6 +38,5 @@ while True:
         log.log(LLOG_DATA, format(data))
     except Exception as e:
         log.log(LLOG_ERROR, e)
-
     if args.frequency:
         time.sleep(1.0/args.frequency)
