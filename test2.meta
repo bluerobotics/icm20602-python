@@ -1,0 +1,49 @@
+{
+  "0": {
+    "type": "error",
+    "columns": [
+      {
+        "name": "error message",
+        "dtype": "str"
+      }
+    ]
+  },
+  "1": {
+    "type": "data",
+    "columns": [
+      {
+        "name": "pressure",
+        "units": "mbar",
+        "dtype": "float",
+        "color": "orange",
+        "style": "x"
+      },
+      {
+        "name": "t",
+        "units": "C",
+        "dtype": "int",
+        "color": "purple",
+        "style": "o-"
+      }
+    ]
+  },
+  "2": {
+    "type": "rom",
+    "columns": [
+        {
+            "name": "romA",
+            "dtype": "float"
+        },
+        {
+            "name": "romB",
+            "dtype": "int"
+        }
+    ]
+  },
+  "3": {
+    "type": "configuration"
+  },
+  "4": {
+    "type": "calibration"
+  }
+}

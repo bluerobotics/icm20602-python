@@ -5,14 +5,14 @@ import json
 import time
 
 LLOG_ERROR = '0'
-# read only memory + factory calibration and serialization type information
-LLOG_ROM = '1'
-# application-specific configuration information
-LLOG_CONFIG = '2'
 # measurement data
-LLOG_DATA = '4'
+LLOG_DATA = '1'
+# read only memory + factory calibration and serialization type information
+LLOG_ROM = '2'
+# application-specific configuration information
+LLOG_CONFIG = '3'
 # calibration data
-LLOG_CALIBRATION = '5'
+LLOG_CALIBRATION = '4'
 
 # the fields that are expected to be present in metadata
 llRequired = [
@@ -34,27 +34,34 @@ class LLogSeries(pd.Series):
 
     @property
     def _constructor(self):
+        print('lls constructor')
         return LLogSeries
 
     @property
     def _constructor_expanddim(self):
+        print('lls constructor expand')
         return LLogDataFrame
 
     def plot(self, *args, **kwargs):
-        print('plotnig', self.meta)
-        meta = self.meta
+        print('plotnig', self.name, self.meta)
+        for k,v in self.meta.items():
+            print(f'{k}:{v}')
+            # if v['name'] == self.name:
+            #     self.meta = v
+        # meta = self.meta[]
+        # meta = self.meta
 
-        kwargs = meta|kwargs
-        ax = super().plot(*args, **kwargs)
-        ax.legend()
+        # kwargs = meta|kwargs
+        # ax = super().plot(*args, **kwargs)
+        # ax.legend()
 
-        name = meta['name']
-        units = f' {meta["units"]}'
-        # color = f'{meta["color"]}'
-        # marker = f'{meta["marker"]}'
+        # name = meta['name']
+        # units = f' {meta["units"]}'
+        # # color = f'{meta["color"]}'
+        # # marker = f'{meta["marker"]}'
 
-        ax.set_ylabel(f'{name}{units}')
-        return ax
+        # ax.set_ylabel(f'{name}{units}')
+        # return ax
 
 
     
@@ -64,22 +71,26 @@ class LLogDataFrame(pd.DataFrame):
 
     @property
     def _constructor(self):
+        print('lld constructor')
         return LLogDataFrame
 
     @property
     def _constructor_sliced(self):
-        def _c(*args, **kwargs):
-            s = LLogSeries(*args, **kwargs)
-            try:
-                name = kwargs['name']
-                meta = self.meta[name]
-                s.meta = meta
-                print(f'set series meta to {meta}')
-            except:
-                print(f'failure setting series meta {name} {self.meta}')
-                pass
-            return s
-        return _c
+        print('lld constructor_sliced')
+        # def _c(*args, **kwargs):
+        #     s = LLogSeries(*args, **kwargs)
+        #     try:
+        #         print(kwargs)
+        #         name = kwargs['name']
+        #         print(f'set series meta {name} to {meta}')
+        #         meta = self.meta[name]
+        #         s.meta = meta
+        #     except:
+        #         print(f'failure setting series meta {name} {self.meta}')
+        #         pass
+        #     return s
+        # return _c
+        return LLogSeries
 
     def plot(self, *args, **kwargs):
         for c in self:
@@ -177,60 +188,60 @@ class LLogDataFrame(pd.DataFrame):
 
 class LLogReader:
     def __init__(self, logfile, metafile):
-        self.meta = self.metaOpen(metafile)
         self.df = self.logOpen(logfile)
-        self.df.meta = self.meta
+        self.df.meta = self.metaOpen(metafile)
 
-        self.df.rename(columns={0:'time', 1:'llType'}, inplace=True)
-        self.df['llType'] = self.df['llType'].astype(int)
+        # self.df.rename(columns={0:'time', 1:'llType'}, inplace=True)
+        # self.df['llType'] = self.df['llType'].astype(int)
 
-        for llType, llDesc in self.meta.items():
-            DF = self.df
+        # for llType, llDesc in self.meta.items():
+        #     DF = self.df
 
-            attr = llDesc['type']
-            value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
+        #     attr = llDesc['type']
+        #     value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
 
-            try:
-                columns = llDesc['columns']
-                l = min(len(columns), len(value.columns)-2)
+        #     try:
+        #         columns = llDesc['columns']
+        #         l = min(len(columns), len(value.columns)-2)
 
-                # rename columns
-                for c in range(l):
-                    i = c + 2
-                    name = columns[c]['name']
-                    value.rename(columns={i: name}, inplace=True)
+        #         # rename columns
+        #         for c in range(l):
+        #             i = c + 2
+        #             name = columns[c]['name']
+        #             value.rename(columns={i: name}, inplace=True)
+        #     except:
+        #         pass
+        # #         # convert field type
+        #         for c in range(l):
+        #             name = columns[c]['name']
+        #             try:
+        #                 dtype = columns[c]['dtype']
+        #                 print('dtype is', dtype, type(dtype), dtype=="int")
+        #                 if dtype == "int":
+        #                     value[name] = value[name].astype(int)
+        #                 elif dtype == "float":
+        #                     value[name] = value[name].astype(float)
+        #             except KeyError:
+        #                 try:
+        #                     value[name] = value[name].astype(float)
+        #                 except:
+        #                     pass
 
-                # convert field type
-                for c in range(l):
-                    name = columns[c]['name']
-                    try:
-                        dtype = columns[c]['dtype']
-                        print('dtype is', dtype, type(dtype), dtype=="int")
-                        if dtype == "int":
-                            value[name] = value[name].astype(int)
-                        elif dtype == "float":
-                            value[name] = value[name].astype(float)
-                    except KeyError:
-                        try:
-                            value[name] = value[name].astype(float)
-                        except:
-                            pass
+        #         # # attach metadata !! this must be done last
+        #         # for c in range(l):
+        #         #     name = columns[c]['name']
+        #         #     value[name].attrs['llMeta'] = llOptional | columns[c]
 
-                # # attach metadata !! this must be done last
-                # for c in range(l):
-                #     name = columns[c]['name']
-                #     value[name].attrs['llMeta'] = llOptional | columns[c]
-
-            except ValueError:
-                print(f'{attr} could not convert string to float')
-                pass
-            except KeyError:
-                print(f'{attr} does not have columns definition')
-                pass
+        #     except ValueError:
+        #         print(f'{attr} could not convert string to float')
+        #         pass
+        #     except KeyError:
+        #         print(f'{attr} does not have columns definition')
+        #         pass
 
             # eg for each type name in log, set self.type to
             # the dataframe representing only that type
-            setattr(self, attr, value)
+            # setattr(self, attr, value)
 
     def metaOpen(self, metafile):
         with open(metafile, 'r') as f:
