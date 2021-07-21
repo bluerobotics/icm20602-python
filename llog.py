@@ -63,7 +63,7 @@ class LLogSeries(pd.Series):
         # ax.set_ylabel(f'{name}{units}')
         # return ax
 
-
+#llTypes must be unique
     
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
@@ -71,12 +71,37 @@ class LLogDataFrame(pd.DataFrame):
 
     @property
     def _constructor(self):
+        # def _c = 
         print('lld constructor')
-        return LLogDataFrame
+        # print(f'meta {self.columns}')
+        # return lambda o(): LLogDataFrame(columns=)
+
+        def _c(*args, **kwargs):
+            kwargs['columns'] = [self.meta[n]['name'] for n in self.meta]
+            df = LLogDataFrame(*args, **kwargs)
+            return df
+        return _c
+
+        # return LLogDataFrame
 
     @property
     def _constructor_sliced(self):
         print('lld constructor_sliced')
+        # def _c(*args, **kwargs):
+            
+        #     s = LLogSeries(*args, **kwargs)
+        #     try:
+        #         print(kwargs)
+        #         name = kwargs['name']
+        #         print(f'set series meta {name} to {meta}')
+        #         meta = self.meta[name]
+        #         s.meta = meta
+        #     except:
+        #         print(f'failure setting series meta {name} {self.meta}')
+        #         pass
+        #     return s
+        # return _c
+
         # def _c(*args, **kwargs):
         #     s = LLogSeries(*args, **kwargs)
         #     try:
@@ -188,11 +213,14 @@ class LLogDataFrame(pd.DataFrame):
 
 class LLogReader:
     def __init__(self, logfile, metafile):
+        # self.meta = self.metaOpen(metafile)
         self.df = self.logOpen(logfile)
-        self.df.meta = self.metaOpen(metafile)
+        
+        self.meta = self.metaOpen(metafile)
+        # self.df.meta = self.metaOpen(metafile)
 
-        self.df.rename(columns={0:'time', 1:'llType'}, inplace=True)
-        self.df['llType'] = self.df['llType'].astype(int)
+        self.df.rename(columns={0:'time', 1:'llKey'}, inplace=True)
+        self.df['llKey'] = self.df['llKey'].astype(int)
 
         # for llType, llDesc in self.meta.items():
         #     DF = self.df
@@ -248,22 +276,31 @@ class LLogReader:
             # the dataframe representing only that type
             # setattr(self, attr, value)
 
-        for llType, llDesc in self.df.meta.items():
+
+
+
+
+        
+
+        for llKey, llDesc in self.meta.items():
             DF = self.df
 
-            attr = llDesc['type']
-            value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
+            value = DF[DF['llKey'] == int(llKey)].dropna(axis='columns', how='all')
             # eg for each type name in log, set self.type to
             # the dataframe representing only that type
-            setattr(self, attr, value)
+            llType = llDesc['type']
+
+            # create LLDF..
+            setattr(self, llType, value)
 
     def metaOpen(self, metafile):
         with open(metafile, 'r') as f:
             return json.load(f)
     
     def logOpen(self, logfile):
-        df = pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
-        return LLogDataFrame(df)
+        return pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        # df = pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        # return LLogDataFrame(df)
 
 class LLogWriter:
     def __init__(self, meta, logfile=None, console=True):
