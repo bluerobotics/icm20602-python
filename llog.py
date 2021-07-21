@@ -136,7 +136,35 @@ class LLogDataFrame(pd.DataFrame):
         #         pass
         #     return s
         # return _c
+
+        # def _c(*args, **kwargs):
+        #     s = LLogSeries(*args, **kwargs)
+        #     try:
+        #         print(kwargs)
+        #         name = kwargs['name']
+        #         print(f'set series meta {name} to {meta}')
+        #         meta = self.meta[name]
+        #         s.meta = meta
+        #     except:
+        #         print(f'failure setting series meta {name} {self.meta}')
+        #         pass
+        #     return s
+        # return _c
+
+
         return LLogSeries
+
+        # def _c(*args, **kwargs):
+        #     s = LLogSeries(*args, **kwargs)
+        #     try:
+        #         print('!!!!!')
+        #         print(kwargs['name'])
+        #         print(self.meta)
+        #         s.meta = self.meta[kwargs['name']]
+        #     except:
+        #         pass
+        #     return s
+        # return _c
 
     def plot(self, *args, **kwargs):
         for c in self:
@@ -311,15 +339,23 @@ class LLogReader:
             # eg for each type name in log, set self.type to
             # the dataframe representing only that type
             print(llKey, llDesc)
-            try:
-
-                c = {i+2:llDesc['columns'][i]['name'] for i in range(len(llDesc['columns']))}
-            except:
-                c = {}
             value = LLogDataFrame(value)
             value.meta = llDesc
-            value.rename(columns=c, inplace=True)
+            try:
+                columns = llDesc['columns']
+                
 
+                # # subtract 2 for the required timestamp and llType
+                # l = min(len(columns), len(value.columns)-2)
+                # for c in l:
+                #     value[c].meta = columns[c]
+                
+                c = {i+2:llDesc['columns'][i]['name'] for i in range(len(llDesc['columns']))}
+                value.rename(columns=c, inplace=True)
+                
+
+            except:
+                pass
 
             llType = llDesc['type']
 

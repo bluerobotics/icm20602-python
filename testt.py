@@ -43,4 +43,5 @@ plt.figure()
 dt.plot()
 plt.figure()
 
+da.meta
 # log.df['pressure'].plot()
