@@ -1,14 +1,16 @@
 import pandas as pd
 import llog
 
+# https://stackoverflow.com/questions/47466255/subclassing-a-pandas-dataframe-updates
 class LLogSeries(pd.Series):
     _metadata = ['metas']
-    def __init__(self, meta):
-        self.meta = meta
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
     # metas = 'boing'
     @property
     def _constructor(self):
         print('series fuck')
+
         return LLogSeries()
         # self.hello = 'goodbye'
         # return self
@@ -16,6 +18,8 @@ class LLogSeries(pd.Series):
     def _constructor_expanddim(self):
         print('series fuck2')
         return LLogDataFrame
+
+    
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
     _metadata = ['metad']
@@ -24,10 +28,24 @@ class LLogDataFrame(pd.DataFrame):
     def _constructor(self):
         print('dataframe fuck')
         return LLogDataFrame
+        # return LLogDataFrame._internal_ctor
+
+    # @classmethod
+    # def _internal_ctor(cls, *args, **kwargs):
+    #     kwargs['meta'] = None
+    #     return cls(*args, **kwargs)
+
+
     @property
     def _constructor_sliced(self):
-        print('dataframe fuck2')
-        return LLogSeries(self.meta)
+        def _c(*args, **kwargs):
+            print('dataframe fuck2')
+
+            a = LLogSeries(*args, **kwargs)
+            a.metas = 'custom'
+            return a
+
+        return _c
 
 a = LLogSeries(['a','a'], name='A')
 b = LLogSeries(['b','b'], name='B')
