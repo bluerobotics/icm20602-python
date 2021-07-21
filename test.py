@@ -39,10 +39,13 @@ class LLogDataFrame(pd.DataFrame):
     @property
     def _constructor_sliced(self):
         def _c(*args, **kwargs):
-            print('dataframe fuck2')
+            print('dataframe fuck2', args, kwargs)
 
+            name = kwargs['name']
+
+            meta = self.metad[name]
             a = LLogSeries(*args, **kwargs)
-            a.metas = 'custom'
+            a.metas = meta
             return a
 
         return _c
@@ -55,13 +58,16 @@ c = LLogSeries(['c','c'], name='C')
 a.metas = 'ameta'
 b.metas = 'bmeta'
 c.metas = 'cmeta'
+dfmeta = {
+    "one": "metaone",
+    "two": "metatwo",
+    "three": "metathree",
+}
 df = LLogDataFrame({"one": a, "two":b, "three":c}, index=None)
 
-print(f'ameta {a.metas}')
-# df['one'].metas = 'test'
-df['one'].metas = 'metasone'
+df.metad = dfmeta
+
 print(f'ameta {df["one"].metas}')
-df.metad = 'metadone'
 df2 = df[['one','two']]
 print(f'df2meta: {df2.metad}')
 print(f'df2meta: {df2["one"].metas}')
