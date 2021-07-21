@@ -13,6 +13,7 @@
 import argparse
 from fpdf import FPDF
 from llog import LLogReader
+import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
@@ -45,15 +46,18 @@ plt.figure()
 print(f'f1 {log.data["ax"].attrs}')
 
 d1 = log.data
-axn = d1[['ax', 'ay', 'az']]
+# axn = d1[['ax', 'ay', 'az']]
+# this doesn't delete original, but doesn't copy
+axn = log.data.loc[:,['ax','ay']]
 
 print(f'f2 {log.data["ax"].attrs}')
 print(axn['ax'].attrs)
 print('')
-for c in axn:
-    print(c)
-    print(axn[c].attrs)
-
+# for c in axn:
+#     print(c)
+#     print(axn[c].attrs)
+print(axn)
+axn.ll.plot()
 # plot acceleration
 log.data.ay.ll.plot()
 log.data.az.ll.plot()
@@ -78,7 +82,7 @@ q_25 = partial(pd.Series.quantile, q=0.25)
 q_25.name = "25%"
 q_75 = partial(pd.Series.quantile, q=0.75)
 q_75.name = "75%"
-plot.data.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
+print(log.data.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"]))
 
 plt.show()
 
