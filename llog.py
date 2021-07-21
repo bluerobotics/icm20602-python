@@ -76,17 +76,38 @@ class LLogDataFrame(pd.DataFrame):
         # print(f'meta {self.columns}')
         # return lambda o(): LLogDataFrame(columns=)
 
-        def _c(*args, **kwargs):
-            kwargs['columns'] = [self.meta[n]['name'] for n in self.meta]
-            df = LLogDataFrame(*args, **kwargs)
-            return df
-        return _c
+        # def _c(*args, **kwargs):
+        #     # print(self.meta)
+        #     # print([c for c in self.meta['columns']])
 
-        # return LLogDataFrame
+        #     print(kwargs)
+        #     df = LLogDataFrame(*args, **kwargs)
+        #     # print(df)
+        #     # kwargs['columns'] = {i+2:self.meta['columns'][i]['name'] for i in range(len(self.meta['columns']))}
+        #     # df = LLogDataFrame(*args, **kwargs)
+        #     print(df)
+
+        #     df.meta = self.meta
+        #     c = {i+2:df.meta['columns'][i]['name'] for i in range(len(df.meta['columns']))}
+        #     df.rename(columns=c, inplace=True)
+        #     # columns = {i:c['name'] for c in self.meta[columns]}
+        #     # df.rename(columns=columns, inplace=True)
+        #     # l = min(len(columns), len(value.columns)-2)
+
+        #     # # rename columns
+        #     # for c in range(l):
+        #     #     i = c + 2
+        #     #     name = columns[c]['name']
+        #     #     df.rename(columns=columns, inplace=True)
+        #     return df
+        # return _c
+
+        return LLogDataFrame
 
     @property
     def _constructor_sliced(self):
         print('lld constructor_sliced')
+        # print(self.meta)
         # def _c(*args, **kwargs):
             
         #     s = LLogSeries(*args, **kwargs)
@@ -286,9 +307,22 @@ class LLogReader:
             DF = self.df
 
             value = DF[DF['llKey'] == int(llKey)].dropna(axis='columns', how='all')
+
             # eg for each type name in log, set self.type to
             # the dataframe representing only that type
+            print(llKey, llDesc)
+            try:
+
+                c = {i+2:llDesc['columns'][i]['name'] for i in range(len(llDesc['columns']))}
+            except:
+                c = {}
+            value = LLogDataFrame(value)
+            value.meta = llDesc
+            value.rename(columns=c, inplace=True)
+
+
             llType = llDesc['type']
+
 
             # create LLDF..
             setattr(self, llType, value)
