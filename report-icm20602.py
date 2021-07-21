@@ -27,7 +27,43 @@ args = parser.parse_args()
 
 
 log = LLogReader(args.input, args.meta)
-log.data.ll.plot(['ax', 'ay', 'az'], ['t'])
+# log.data.ll.plot(['ax', 'ay', 'az'], ['t'])
+
+
+
+# plot acceleration
+log.data.ay.ll.plot()
+log.data.az.ll.plot()
+log.data.ax.ll.plot()
+plt.twinx()
+log.data.t.ll.plot()
+
+# log.data.ll.plot(['ax', 'ay', 'az'], ['t'])
+
+plt.figure()
+
+# plot acceleration
+log.data.ay.ll.plot()
+log.data.az.ll.plot()
+log.data.ax.add(1.0).ll.plot()
+plt.twinx()
+log.data.t.ll.plot()
+
+# log.data.ll.plot(['ax', 'ay', 'az'], ['t'])
+
+plt.figure()
+
+log.data.gx.ll.plot()
+log.data.gy.ll.plot()
+log.data.gz.ll.plot()
+plt.twinx()
+log.data.t.ll.plot()
+
+
+plt.show()
+
+
+exit(0)
 # d = log.data
 # a = d[['ax','ay','az']]
 # g = d[['gx','gy','gz']]
@@ -39,6 +75,11 @@ epw = pdf.w - 2*pdf.l_margin
 eph = pdf.w - 2*pdf.l_margin
 pdf.add_page()
 pdf.set_font('Courier')
+
+
+
+
+
 
 def addfig(fig, w, h):
     pdf.cell(w, h, f'{w} {h}', border=1)

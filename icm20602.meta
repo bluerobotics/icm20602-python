@@ -14,8 +14,36 @@
       }
     ]
   },
-  "1": {
-    "type": "rom"
+  "10": {
+    "type": "rom",
+    "columns": [
+        {
+            "name": "month",
+            "dtype": "int"
+        },
+        {
+            "name": "day",
+            "dtype": "int"
+        },
+        {
+            "name": "year",
+            "dtype": "int"
+        },
+        {
+            "name": "pMin",
+            "units": "bar",
+            "dtype": "float"
+        },
+        {
+            "name": "pMax",
+            "units": "bar",
+            "dtype": "float"
+        },
+        {
+            "name": "pModeID",
+            "dtype": "int"
+        }
+    ]
   },
   "2": {
     "type": "configuration",
@@ -55,7 +83,7 @@
   "3": {
     "type": "calibration"
   },
-  "4": {
+  "1": {
     "type": "data",
     "columns": [
       {

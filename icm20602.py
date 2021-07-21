@@ -123,9 +123,7 @@ class ICM20602(object):
         self._bus.open(1, 2)
         self._bus.max_speed_hz = 4000000
 
-        print("reset", self.reset())
         self._id = self.read_id()
-        print("detected device id %d on bus %s" % (self._id, bus))
         self.initialize()
 
 
