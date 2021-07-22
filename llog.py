@@ -75,6 +75,7 @@ class LLogSeries(pd.Series):
 
 
 
+# a log dataframe must all be one type
 
 # https://stackoverflow.com/a/67993495
 

@@ -50,16 +50,21 @@ class LLogDataFrame(pd.DataFrame):
         for c in self:
             self[c].pplot(*args, **kwargs)
 
+df = LLogDataFrame({1: [1,2], 1:[2,4], 3:[3,6]}, index=None)
+df = LLogDataFrame({1: [1,2], 2:[2,4], 3:[3,6]}, index=None)
 
-df = LLogDataFrame({"one": [1,2], "two":[2,4], "three":[3,6]}, index=None)
 dfmeta = {
-    "one": {"style": "x-", "units": "C"},
-    "two": {"units": "dps"},
-    "three": {"style":"o", "color": "green", "units": "dps"},
+    "llType": "data",
+    "columns": [
+        {"label": "gx", "style": "x-", "units": "C"},
+        {"label": "gy", "units": "dps"},
+        {"label": "gz", "style":"o", "color": "green", "units": "dps"}
+    ]
 }
+
 df.meta = dfmeta
 
-df2 = df[['one','two']]
+df2 = df[['gx', 'gy']]
 
 df.pplot()
 plt.show()
