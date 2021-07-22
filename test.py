@@ -16,29 +16,23 @@ class LLogSeries(pd.Series):
         return LLogDataFrame
 
     def pplot(self, *args, **kwargs):
-        print('asdfasdf')
-        print('plotting', self.name, kwargs)
+        print(f'sup {self.name}')
 
-        try:
-            meta = self.meta[self.name]
-            print(f'got meta {meta}')
-            kwargs = kwargs | meta
-            # print(kwargs)
-        except Exception as e:
-            print(e)
+        # print(self.index.get_loc(self.name))
+        meta = self.meta[self.name]
+        kwargs = kwargs | {'label': self.name}
+
+        for opt in ["color", "style", "label"]:
+            try:
+                kwargs = kwargs | {opt:meta[opt]}
+            except KeyError as e:
+                # print(e)
+                pass
+
+        self.plot(*args, **kwargs)
+        plt.legend()
+        plt.ylabel(meta['units'])
         
-        # ax = super().plot(*args, **kwargs)
-        ax = self.plot(*args, **kwargs)
-        ax.legend()
-
-        # name = meta['name']
-        # units = f' {meta["units"]}'
-        # # color = f'{meta["color"]}'
-        # # marker = f'{meta["marker"]}'
-
-        # ax.set_ylabel(f'{name}{units}')
-        # return ax
-
     
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
@@ -54,35 +48,18 @@ class LLogDataFrame(pd.DataFrame):
 
     def pplot(self, *args, **kwargs):
         for c in self:
-            print(f'plotting {c}')
             self[c].pplot(*args, **kwargs)
 
 
-
-
-# a = LLogSeries(['a','a'], name='A')
-# b = LLogSeries(['b','b'], name='B')
-# c = LLogSeries(['c','c'], name='C')
-
-# 
-# a.metas = 'ameta'
-# b.metas = 'bmeta'
-# c.metas = 'cmeta'
-dfmeta = {
-    "one": {"label": "data1"},
-    "two": {"label": "data2"},
-    "three": {"label": "data3"},
-}
-# df = LLogDataFrame({"one": a, "two":b, "three":c}, index=None)
 df = LLogDataFrame({"one": [1,2], "two":[2,4], "three":[3,6]}, index=None)
-
+dfmeta = {
+    "one": {"style": "x-", "units": "C"},
+    "two": {"units": "dps"},
+    "three": {"style":"o", "color": "green", "units": "dps"},
+}
 df.meta = dfmeta
 
-print(f'ameta {df["one"].meta}')
 df2 = df[['one','two']]
-print(f'df2meta: {df2.meta}')
-print(f'df2meta: {df2["one"].meta}')
 
-# df2['one'].plot()
 df.pplot()
 plt.show()
