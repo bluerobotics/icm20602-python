@@ -30,22 +30,28 @@ llOptional = {
 
 # https://stackoverflow.com/questions/47466255/subclassing-a-pandas-dataframe-updates
 class LLogSeries(pd.Series):
-    _metadata = ['meta']
+    _metadata = ['llSeriesMeta']
 
     @property
     def _constructor(self):
         print('lls constructor')
         return LLogSeries
+        # return LLogSeries
+
+    # def __init__(self, *args, meta=None, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     # self.llSeriesMeta = s
+    #     # self.llSeriesMeta = 'default llSeriesMeta'
 
     @property
     def _constructor_expanddim(self):
         print('lls constructor expand')
         return LLogDataFrame
 
-    def plot(self, *args, **kwargs):
-        print('plotnig', self.name, self.meta)
-        for k,v in self.meta.items():
-            print(f'{k}:{v}')
+    # def plot(self, *args, **kwargs):
+    #     print('plotnig', self.name, self.meta)
+    #     for k,v in self.meta.items():
+    #         print(f'{k}:{v}')
             # if v['name'] == self.name:
             #     self.meta = v
         # meta = self.meta[]
@@ -159,19 +165,21 @@ class LLogDataFrame(pd.DataFrame):
         # return _c
 
 
-        return LLogSeries
+        # return LLogSeries
 
-        # def _c(*args, **kwargs):
-        #     s = LLogSeries(*args, **kwargs)
-        #     try:
-        #         print('!!!!!')
-        #         print(kwargs['name'])
-        #         print(self.meta)
-        #         s.meta = self.meta[kwargs['name']]
-        #     except:
-        #         pass
-        #     return s
-        # return _c
+        def _c(*args, **kwargs):
+            s = LLogSeries(*args, **kwargs)
+            try:
+                name = kwargs['name']
+                print('!!!!!')
+                print(kwargs)
+                print(self.meta)
+                # s.llSeriesMeta = self.meta[kwargs['name']]
+                s.llSeriesMeta = self[name].llSeriesMeta
+            except Exception as e:
+                print(e)
+            return s
+        return _c
 
     def plot(self, *args, **kwargs):
         for c in self:
@@ -350,7 +358,13 @@ class LLogReader:
             value.meta = llDesc
             
 
-
+            # try:
+            #     c = {i+2:llDesc['columns'][i]['name'] for i in range(len(llDesc['columns']))}
+            #     value.rename(columns=c, inplace=True)
+        
+            # except:
+            #     pass
+            
             try:
                 # do this first to go by index
                 columns = llDesc['columns']
@@ -359,19 +373,21 @@ class LLogReader:
                 # subtract 2 for the required timestamp and llType
                 l = min(len(columns), len(value.columns)-2)
                 for i in range(l):
-                    value[i+2].meta = columns[i]
-                    print(f'!!!! {i} {value[i+2].meta}')
+                    name = columns[i]['name']
+                    value.rename(columns={i+2: name}, inplace=True)
+                    value[name].llSeriesMeta = columns[i]
+                    print(f'!!!! {i} {value[name].llSeriesMeta}')
 
             except Exception as e:
                 print(e)
 
-            try:
-                c = {i+2:llDesc['columns'][i]['name'] for i in range(len(llDesc['columns']))}
-                value.rename(columns=c, inplace=True)
-                
 
-            except:
-                pass
+            try:
+                for s in value:
+                    print(f'~~~~~~{value[s].llSeriesMeta}')
+                
+            except Exception as e:
+                print(e)
 
             # todo global llType
             llType = llDesc['type']

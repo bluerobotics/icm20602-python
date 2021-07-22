@@ -36,12 +36,12 @@ dt = log.data['t']
 
 ## try scaling!
 
-da.plot()
-plt.figure()
-dp.plot()
-plt.figure()
-dt.plot()
-plt.figure()
+# da.plot()
+# plt.figure()
+# dp.plot()
+# plt.figure()
+# dt.plot()
+# plt.figure()
 
-da.meta
+# da.meta
 # log.df['pressure'].plot()

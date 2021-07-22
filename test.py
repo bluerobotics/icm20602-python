@@ -4,7 +4,7 @@ import llog
 
 # https://stackoverflow.com/questions/47466255/subclassing-a-pandas-dataframe-updates
 class LLogSeries(pd.Series):
-    _metadata = ['meta']
+    _metadata = ['meta', 'smeta']
 
     @property
     def _constructor(self):
@@ -47,8 +47,9 @@ class LLogDataFrame(pd.DataFrame):
             try:
                 name = kwargs['name']
                 meta = self.meta[name]
-                s.meta = meta
-            except:
+                s.smeta = meta
+            except Exception as e:
+                print(e)
                 pass
             return s
         return _c
