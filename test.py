@@ -44,12 +44,14 @@ class LLogDataFrame(pd.DataFrame):
 
     @property
     def _constructor_sliced(self):
+        print('fuck')
         return LLogSeries
 
     def pplot(self, *args, **kwargs):
         for c in self:
             self[c].pplot(*args, **kwargs)
 
+# df = LLogDataFrame({1: [1,2], 1:[2,4], 3:[3,6]}, metadata, index=None)
 df = LLogDataFrame({1: [1,2], 1:[2,4], 3:[3,6]}, index=None)
 df = LLogDataFrame({1: [1,2], 2:[2,4], 3:[3,6]}, index=None)
 
