@@ -71,7 +71,7 @@ dfmeta = {
     "three": "metathree",
 }
 # df = LLogDataFrame({"one": a, "two":b, "three":c}, index=None)
-df = LLogDataFrame({"one": ['a','a'], "two":['b','b'], "three":['c','c']}, index=None)
+df = LLogDataFrame({"one": [1,2], "two":[2,4], "three":[3,6]}, index=None)
 
 df.meta = dfmeta
 
