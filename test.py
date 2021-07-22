@@ -23,7 +23,7 @@ class LLogSeries(pd.Series):
 
     def pplot(self, *args, **kwargs):
         print('asdfasdf')
-        print('plotting', self.name)
+        print('plotting', self.name, kwargs)
 
         try:
             meta = self.meta[self.name]
@@ -67,9 +67,11 @@ class LLogDataFrame(pd.DataFrame):
         #     return s
         # return _c
 
-    def plot(self, *args, **kwargs):
+    def pplot(self, *args, **kwargs):
+
         for c in self:
-            self[c].plot(*args, **kwargs)
+            print(f'plotting {c}')
+            self[c].pplot(*args, **kwargs)
 # a = LLogSeries(['a','a'], name='A')
 # b = LLogSeries(['b','b'], name='B')
 # c = LLogSeries(['c','c'], name='C')
