@@ -64,7 +64,14 @@ class LLogSeries(pd.Series):
         # return ax
 
 #llTypes must be unique
-    
+
+
+
+
+
+
+# https://stackoverflow.com/a/67993495
+
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
     _metadata = ['meta']
@@ -341,15 +348,24 @@ class LLogReader:
             print(llKey, llDesc)
             value = LLogDataFrame(value)
             value.meta = llDesc
-            try:
-                columns = llDesc['columns']
-                
+            
 
-                # # subtract 2 for the required timestamp and llType
-                # l = min(len(columns), len(value.columns)-2)
-                # for c in l:
-                #     value[c].meta = columns[c]
-                
+
+            try:
+                # do this first to go by index
+                columns = llDesc['columns']
+           
+
+                # subtract 2 for the required timestamp and llType
+                l = min(len(columns), len(value.columns)-2)
+                for i in range(l):
+                    value[i+2].meta = columns[i]
+                    print(f'!!!! {i} {value[i+2].meta}')
+
+            except Exception as e:
+                print(e)
+
+            try:
                 c = {i+2:llDesc['columns'][i]['name'] for i in range(len(llDesc['columns']))}
                 value.rename(columns=c, inplace=True)
                 
@@ -357,6 +373,7 @@ class LLogReader:
             except:
                 pass
 
+            # todo global llType
             llType = llDesc['type']
 
 
