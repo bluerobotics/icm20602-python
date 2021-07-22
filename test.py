@@ -48,10 +48,9 @@ class LLogDataFrame(pd.DataFrame):
         # grab the keyword argument that is supposed to be my_attr
         self.meta = kwargs.pop('meta', None)
         columns = self.meta['columns']
-        # print("hello", columns, self)
 
-    #########
-    put this stuf after super.init!
+        # ########
+        # put this stuf after super.init!
         # for c in df[1:]:
         # #     print(c)
         # l = min(len(columns), len(self)-2)
@@ -65,6 +64,9 @@ class LLogDataFrame(pd.DataFrame):
             # value[name].llSeriesMeta = columns[i]
             # print(f'!!!! {i} {value[name].llSeriesMeta}')
         super().__init__(*args, **kwargs)
+        print("hello", columns, self.columns)
+        for c in self.columns:
+            print(self[c])
 
     # @propertydf
     # def _constructor(self):
