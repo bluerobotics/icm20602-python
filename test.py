@@ -9,12 +9,6 @@ class LLogSeries(pd.Series):
 
     @property
     def _constructor(self):
-        # def _c(*args, **kwargs):
-        #     print(f'lls constructor self{args} {kwargs.keys()}')
-        #     return LLogSeries
-
-
-        # return _c
         return LLogSeries
 
     @property
@@ -29,10 +23,12 @@ class LLogSeries(pd.Series):
             meta = self.meta[self.name]
             print(f'got meta {meta}')
             kwargs = kwargs | meta
+            # print(kwargs)
         except Exception as e:
             print(e)
         
-        ax = super().plot(*args, **kwargs)
+        # ax = super().plot(*args, **kwargs)
+        ax = self.plot(*args, **kwargs)
         ax.legend()
 
         # name = meta['name']
@@ -55,23 +51,15 @@ class LLogDataFrame(pd.DataFrame):
     @property
     def _constructor_sliced(self):
         return LLogSeries
-        # def _c(*args, **kwargs):
-        #     s = LLogSeries(*args, **kwargs)
-        #     try:
-        #         name = kwargs['name']
-        #         meta = self.meta[name]
-        #         s.smeta = meta
-        #     except Exception as e:
-        #         print(e)
-        #         pass
-        #     return s
-        # return _c
 
     def pplot(self, *args, **kwargs):
-
         for c in self:
             print(f'plotting {c}')
             self[c].pplot(*args, **kwargs)
+
+
+
+
 # a = LLogSeries(['a','a'], name='A')
 # b = LLogSeries(['b','b'], name='B')
 # c = LLogSeries(['c','c'], name='C')
@@ -81,9 +69,9 @@ class LLogDataFrame(pd.DataFrame):
 # b.metas = 'bmeta'
 # c.metas = 'cmeta'
 dfmeta = {
-    "one": "metaone",
-    "two": "metatwo",
-    "three": "metathree",
+    "one": {"label": "data1"},
+    "two": {"label": "data2"},
+    "three": {"label": "data3"},
 }
 # df = LLogDataFrame({"one": a, "two":b, "three":c}, index=None)
 df = LLogDataFrame({"one": [1,2], "two":[2,4], "three":[3,6]}, index=None)
@@ -96,4 +84,5 @@ print(f'df2meta: {df2.meta}')
 print(f'df2meta: {df2["one"].meta}')
 
 # df2['one'].plot()
-df2.plot()
+df.pplot()
+plt.show()
