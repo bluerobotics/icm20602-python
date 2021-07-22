@@ -19,8 +19,17 @@ class LLogSeries(pd.Series):
         print(f'sup {self.name}')
 
         # print(self.index.get_loc(self.name))
-        meta = self.meta[self.name]
-        
+        columns = self.meta['columns']
+        meta = {}
+        for c in columns:
+            print(c, self.name, c.get('llabel'))
+            if self.name == c.get('llabel'):
+                print('got', c)
+                meta = c
+                break
+
+        # meta = self.meta[self.name]
+                                      
         kwargs2 = kwargs | {'label': self.name}
 
         for opt in ["color", "style", "label"]:
@@ -29,10 +38,10 @@ class LLogSeries(pd.Series):
             except KeyError as e:
                 # print(e)
                 pass
-
+        
         self.plot(*args, **kwargs2)
         plt.legend()
-        plt.ylabel(meta['units'])
+        plt.ylabel(meta.get('units'))
 
         if ll2 is not None:
             plt.twinx()
@@ -47,7 +56,6 @@ class LLogDataFrame(pd.DataFrame):
     def __init__(self, *args, **kwargs):
         # grab the keyword argument that is supposed to be my_attr
         self.meta = kwargs.pop('meta', None)
-        columns = self.meta['columns']
 
         # ########
         # put this stuf after super.init!
@@ -64,9 +72,23 @@ class LLogDataFrame(pd.DataFrame):
             # value[name].llSeriesMeta = columns[i]
             # print(f'!!!! {i} {value[name].llSeriesMeta}')
         super().__init__(*args, **kwargs)
-        print("hello", columns, self.columns)
-        for c in self.columns:
-            print(self[c])
+
+        # sometimes dataframe meta is not provided in intermediate operations
+        if self.meta is not None:
+            columns = self.meta['columns']
+
+            l = min(len(columns), len(self.columns)-2)
+
+            print(l, len(columns), len(self),)
+            for c in range(l):
+                llabel = columns[c]['llabel']
+                print(llabel)
+                self.rename(columns={c+2:llabel}, inplace=True)
+                # self[c+2].rename(llabel, inplace=True)
+
+            print("hello", columns, self.columns, len(self), len(columns))
+            for c in self.columns:
+                print(self[c])
 
     # @propertydf
     # def _constructor(self):
@@ -84,7 +106,7 @@ class LLogDataFrame(pd.DataFrame):
         def _c(*args, **kwargs):
 
             # a = LLogDataFrame(*args, **kwargs).__finalize__(self)
-            a = LLogDataFrame(*args, meta=self.meta, **kwargs)
+            a = LLogDataFrame(*args, meta=self.meta, index=None, **kwargs)
             print('fffuck')
             print(len(a.columns))
             # for c in a:
@@ -96,7 +118,7 @@ class LLogDataFrame(pd.DataFrame):
         
     @property
     def _constructor_sliced(self):
-        print('fuck')
+        print('ldsliced')
         return LLogSeries
 
     def pplot(self, d2=None, *args, **kwargs):
@@ -111,8 +133,8 @@ class LLogDataFrame(pd.DataFrame):
 dfmeta = {
     "llType": "data",
     "columns": [
-        {"llabel": "gx", "style": "x-", "units": "C"},
-        {"llabel": "gy", "units": "dps"},
+        {"llabel": "gx", "style": "x-", "units": "C", "color": "black"},
+        {"llabel": "gy", "units": "dps", "color": "red"},
         {"llabel": "gz", "style":"o", "color": "green", "units": "dps"}
     ]
 }
