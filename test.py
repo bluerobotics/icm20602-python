@@ -48,8 +48,10 @@ class LLogDataFrame(pd.DataFrame):
         # grab the keyword argument that is supposed to be my_attr
         self.meta = kwargs.pop('meta', None)
         columns = self.meta['columns']
-        print("hello", columns)
+        # print("hello", columns, self)
 
+    #########
+    put this stuf after super.init!
         # for c in df[1:]:
         # #     print(c)
         # l = min(len(columns), len(self)-2)
@@ -83,6 +85,8 @@ class LLogDataFrame(pd.DataFrame):
             a = LLogDataFrame(*args, meta=self.meta, **kwargs)
             print('fffuck')
             print(len(a.columns))
+            # for c in a:
+            #     a[c].rename()
             # a.rename(...)
             return a
 
