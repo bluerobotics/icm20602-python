@@ -36,11 +36,13 @@ da = log.data[['p', 't']]
 dp = log.data['p']
 dt = log.data['t']
 
+spec = log.figure()
+plt.subplot(spec[1,:])
 dp.pplot(d2=dt)
-plt.figure()
+plt.subplot(spec[2,:])
 da.pplot(d2=dt)
 
-plt.figure()
+plt.subplot(spec[3,:])
 log.rom.table()
 
 plt.show()

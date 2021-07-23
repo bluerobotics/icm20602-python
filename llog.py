@@ -142,7 +142,8 @@ class LLogDataFrame(pd.DataFrame):
     def table(self, *args, **kwargs):
         plt.table(cellText=self.to_numpy(dtype=str), colLabels=self.columns, loc='bottom', cellLoc='center', bbox=[0,0,1,1])
         plt.axis('off')
-        
+        plt.title(self.meta['llType'])
+
 class LLogReader:
     def __init__(self, logfile, metafile):
         self.df = self.logOpen(logfile)
@@ -172,6 +173,15 @@ class LLogReader:
     def logOpen(self, logfile):
         # return pd.read_csv(logfile, sep=' ', header=None, index_col=None).dropna(axis='columns', how='all').set_index(0, drop=False)
         return pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+
+    def figure(self, height_ratios=[1, 8, 8, 1], columns=2, suptitle='hellotitle', footer='llog\nv1.0', header='header1', pagenum=0):
+        f = plt.figure(figsize=(8.5, 11.0))
+        plt.suptitle('suptitle')
+        rows = len(height_ratios)
+        spec = f.add_gridspec(rows, 2, height_ratios=height_ratios)
+        plt.text(0.98, 0.98, 'header', size=8, horizontalalignment='right', verticalalignment='bottom')
+        plt.text(0.02, 0.02, 'footer', size=8)
+        return spec
 
 class LLogWriter:
     def __init__(self, meta, logfile=None, console=True):
