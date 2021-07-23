@@ -14,6 +14,8 @@ LLOG_ROM = '2'
 LLOG_CONFIG = '3'
 # calibration data
 LLOG_CALIBRATION = '4'
+# information/notes
+LLOG_INFO = '5'
 
 # the fields that are expected to be present in metadata
 llRequired = [
@@ -42,7 +44,7 @@ class LLogSeries(pd.Series):
     def _constructor_expanddim(self):
         return LLogDataFrame
 
-    def pplot(self, ll2=None, *args, **kwargs):
+    def pplot(self, d2=None, *args, **kwargs):
         print(f'sup {self.name}')
 
         columns = self.meta['columns']
@@ -68,9 +70,9 @@ class LLogSeries(pd.Series):
         plt.legend()
         plt.ylabel(meta.get('units'))
 
-        if ll2 is not None:
+        if d2 is not None:
             plt.twinx()
-            ll2.pplot(*args, **kwargs)
+            d2.pplot(*args, **kwargs)
         
     
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
@@ -127,7 +129,8 @@ class LLogDataFrame(pd.DataFrame):
         print('ldsliced')
         return LLogSeries
 
-    def pplot(self, d2=None, *args, **kwargs):
+    def pplot(self, *args, **kwargs):
+        d2 = kwargs.pop('d2', None)
         for c in self:
             self[c].pplot(*args, **kwargs)
         # plot things on secondary axis

@@ -16,7 +16,7 @@
         "units": "mbar",
         "dtype": "float",
         "color": "orange",
-        "style": "x"
+        "style": "x-"
       },
       {
         "llabel": "t",

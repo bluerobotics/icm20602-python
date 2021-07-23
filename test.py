@@ -98,14 +98,23 @@ class LLogDataFrame(pd.DataFrame):
 
 # df = LLogDataFrame({1: [1,2], 1:[2,4], 3:[3,6]}, metadata, index=None)
 dfmeta = {
-    "llType": "data",
-    "columns": [
-        {"llabel": "gx", "style": "x-", "units": "C", "color": "black"},
-        {"llabel": "gy", "units": "dps", "color": "red"},
-        {"llabel": "gz", "style":"o", "color": "green", "units": "dps"}
-    ]
+    "4": {
+        "llType": "data",
+        "columns": [
+            {"llabel": "gx", "style": "x-", "units": "C", "color": "black"},
+            {"llabel": "gy", "units": "dps", "color": "red"},
+            {"llabel": "gz", "style":"o", "color": "green", "units": "dps"}
+        ]
+    },
+
+
 }
-df = LLogDataFrame({1: [1,2], 2:[2,4], 3:[3,6]}, meta=dfmeta, index=None)
+
+# lw = LLogWriter(dfmeta, 'testa.csv')
+# lw.log(LLOG_INFO, f'test1 sha1 cmd1')
+# lw.
+
+df = LLogDataFrame([[1,4,1,10,100][2,4,2,20,200][3,4,3,30,300]], meta=dfmeta, index=None)
 df.pplot()
 df.gx.pplot()
 plt.show()
