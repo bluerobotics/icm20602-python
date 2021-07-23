@@ -120,7 +120,8 @@ class LLogDataFrame(pd.DataFrame):
     @property
     def _constructor(self):
         def _c(*args, **kwargs):
-            df = LLogDataFrame(*args, meta=self.meta, index=None, **kwargs)
+            df = LLogDataFrame(*args, meta=self.meta, **kwargs)
+            # df = LLogDataFrame(*args, meta=self.meta, index=None, **kwargs)
             return df
         return _c
         
@@ -138,6 +139,10 @@ class LLogDataFrame(pd.DataFrame):
             plt.twinx()
             d2.pplot(*args, **kwargs)
 
+    def table(self, *args, **kwargs):
+        plt.table(cellText=self.to_numpy(dtype=str), colLabels=self.columns, loc='bottom', cellLoc='center', bbox=[0,0,1,1])
+        plt.axis('off')
+        
 class LLogReader:
     def __init__(self, logfile, metafile):
         self.df = self.logOpen(logfile)
@@ -165,7 +170,8 @@ class LLogReader:
             return json.load(f)
     
     def logOpen(self, logfile):
-        return pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        # return pd.read_csv(logfile, sep=' ', header=None, index_col=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        return pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
 
 class LLogWriter:
     def __init__(self, meta, logfile=None, console=True):

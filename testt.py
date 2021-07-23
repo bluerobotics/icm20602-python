@@ -40,6 +40,9 @@ dp.pplot(d2=dt)
 plt.figure()
 da.pplot(d2=dt)
 
+plt.figure()
+log.rom.table()
+
 plt.show()
 
 
