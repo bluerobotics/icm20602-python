@@ -1,25 +1,25 @@
 {
   "0": {
-    "type": "error",
+    "llType": "error",
     "columns": [
       {
-        "name": "error message",
+        "llabel": "error message",
         "dtype": "str"
       }
     ]
   },
   "1": {
-    "type": "data",
+    "llType": "data",
     "columns": [
       {
-        "name": "p",
+        "llabel": "p",
         "units": "mbar",
         "dtype": "float",
         "color": "orange",
         "style": "x"
       },
       {
-        "name": "t",
+        "llabel": "t",
         "units": "C",
         "dtype": "int",
         "color": "purple",
@@ -28,22 +28,22 @@
     ]
   },
   "2": {
-    "type": "rom",
+    "llType": "rom",
     "columns": [
         {
-            "name": "romA",
+            "llabel": "romA",
             "dtype": "float"
         },
         {
-            "name": "romB",
+            "llabel": "romB",
             "dtype": "int"
         }
     ]
   },
   "3": {
-    "type": "configuration"
+    "llType": "configuration"
   },
   "4": {
-    "type": "calibration"
+    "llType": "calibration"
   }
 }

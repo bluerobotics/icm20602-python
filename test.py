@@ -18,7 +18,6 @@ class LLogSeries(pd.Series):
     def pplot(self, ll2=None, *args, **kwargs):
         print(f'sup {self.name}')
 
-        # print(self.index.get_loc(self.name))
         columns = self.meta['columns']
         meta = {}
         for c in columns:
@@ -27,9 +26,8 @@ class LLogSeries(pd.Series):
                 print('got', c)
                 meta = c
                 break
-
         # meta = self.meta[self.name]
-                                      
+
         kwargs2 = kwargs | {'label': self.name}
 
         for opt in ["color", "style", "label"]:
@@ -52,29 +50,15 @@ class LLogSeries(pd.Series):
 class LLogDataFrame(pd.DataFrame):
     _metadata = ['meta']
 
-
     def __init__(self, *args, **kwargs):
         # grab the keyword argument that is supposed to be my_attr
         self.meta = kwargs.pop('meta', None)
 
-        # ########
-        # put this stuf after super.init!
-        # for c in df[1:]:
-        # #     print(c)
-        # l = min(len(columns), len(self)-2)
-
-        # for c in range(l):
-        #     llabel = columns[i]['llabel']
-        #     print(llabel, self[c], self[c+2])
-        #     self[c+2].rename(llabel, inplace=True)
-
-            # value.rename(columns={i+2: name}, inplace=True)
-            # value[name].llSeriesMeta = columns[i]
-            # print(f'!!!! {i} {value[name].llSeriesMeta}')
         super().__init__(*args, **kwargs)
 
-        # sometimes dataframe meta is not provided in intermediate operations
         if self.meta is not None:
+            # sometimes dataframe meta is not provided in intermediate operations
+            # if self.meta is not None:
             columns = self.meta['columns']
 
             l = min(len(columns), len(self.columns)-2)
@@ -90,30 +74,11 @@ class LLogDataFrame(pd.DataFrame):
             for c in self.columns:
                 print(self[c])
 
-    # @propertydf
-    # def _constructor(self):
-    #     return LLogDataFrame
-
-
     @property
     def _constructor(self):
-        """This is the key to letting Pandas know how to keep
-        derivative `SomeData` the same type as yours.  It should
-        be enough to return the name of the Class.  However, in
-        some cases, `__finalize__` is not called and `my_attr` is
-        not carried over.  We can fix that by constructing a callable
-        that makes sure to call `__finlaize__` every time."""
         def _c(*args, **kwargs):
-
-            # a = LLogDataFrame(*args, **kwargs).__finalize__(self)
-            a = LLogDataFrame(*args, meta=self.meta, index=None, **kwargs)
-            print('fffuck')
-            print(len(a.columns))
-            # for c in a:
-            #     a[c].rename()
-            # a.rename(...)
-            return a
-
+            df = LLogDataFrame(*args, meta=self.meta, index=None, **kwargs)
+            return df
         return _c
         
     @property
@@ -129,6 +94,8 @@ class LLogDataFrame(pd.DataFrame):
             plt.twinx()
             d2.pplot(*args, **kwargs)
 
+
+
 # df = LLogDataFrame({1: [1,2], 1:[2,4], 3:[3,6]}, metadata, index=None)
 dfmeta = {
     "llType": "data",
@@ -139,19 +106,6 @@ dfmeta = {
     ]
 }
 df = LLogDataFrame({1: [1,2], 2:[2,4], 3:[3,6]}, meta=dfmeta, index=None)
-
-# dfmeta = {
-#     "llType": "data",
-#     "columns": [
-#         {"label": "gx", "style": "x-", "units": "C"},
-#         {"label": "gy", "units": "dps"},
-#         {"label": "gz", "style":"o", "color": "green", "units": "dps"}
-#     ]
-# }
-
-# df.meta = dfmeta
-
-# df2 = df[['gx', 'gy']]
-
-# df.pplot()
-# plt.show()
+df.pplot()
+df.gx.pplot()
+plt.show()
