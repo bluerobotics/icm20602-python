@@ -140,74 +140,12 @@ class LLogDataFrame(pd.DataFrame):
 
 class LLogReader:
     def __init__(self, logfile, metafile):
-        # self.meta = self.metaOpen(metafile)
         self.df = self.logOpen(logfile)
-        
         self.meta = self.metaOpen(metafile)
-        # self.df.meta = self.metaOpen(metafile)
 
+        # todo move this to LLogDataFrame constructor
         self.df.rename(columns={0:'time', 1:'llKey'}, inplace=True)
         self.df['llKey'] = self.df['llKey'].astype(int)
-
-        # for llType, llDesc in self.meta.items():
-        #     DF = self.df
-
-        #     attr = llDesc['type']
-        #     value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
-
-        #     try:
-        #         columns = llDesc['columns']
-        #         l = min(len(columns), len(value.columns)-2)
-
-        #         # rename columns
-        #         for c in range(l):
-        #             i = c + 2
-        #             name = columns[c]['name']
-        #             value.rename(columns={i: name}, inplace=True)
-        #     except:
-        #         pass
-        # #         # convert field type
-        #         for c in range(l):
-        #             name = columns[c]['name']
-        #             try:
-        #                 dtype = columns[c]['dtype']
-        #                 print('dtype is', dtype, type(dtype), dtype=="int")
-        #                 if dtype == "int":
-        #                     value[name] = value[name].astype(int)
-        #                 elif dtype == "float":
-        #                     value[name] = value[name].astype(float)
-        #             except KeyError:
-        #                 try:
-        #                     value[name] = value[name].astype(float)
-        #                 except:
-        #                     pass
-
-        #         # # attach metadata !! this must be done last
-        #         # for c in range(l):
-        #         #     name = columns[c]['name']
-        #         #     value[name].attrs['llMeta'] = llOptional | columns[c]
-
-        #     except ValueError:
-        #         print(f'{attr} could not convert string to float')
-        #         pass
-        #     except KeyError:
-        #         print(f'{attr} does not have columns definition')
-        #         pass
-        # for llType, llDesc in self.meta.items():
-        #     DF = self.df
-
-        #     attr = llDesc['type']
-        #     value = DF[DF['llType'] == int(llType)].dropna(axis='columns', how='all')
-
-            # eg for each type name in log, set self.type to
-            # the dataframe representing only that type
-            # setattr(self, attr, value)
-
-
-
-
-
-        
 
         for llKey, llDesc in self.meta.items():
             DF = self.df
@@ -218,45 +156,8 @@ class LLogReader:
             # the dataframe representing only that type
             print(llKey, llDesc)
             value = LLogDataFrame(value, meta=llDesc)
-            # value.meta = llDesc
             
-
-            # try:
-            #     c = {i+2:llDesc['columns'][i]['name'] for i in range(len(llDesc['columns']))}
-            #     value.rename(columns=c, inplace=True)
-        
-            # except:
-            #     pass
-            
-            # try:
-            #     # do this first to go by index
-            #     columns = llDesc['columns']
-           
-
-            #     # subtract 2 for the required timestamp and llType
-            #     l = min(len(columns), len(value.columns)-2)
-            #     for i in range(l):
-            #         name = columns[i]['name']
-            #         value.rename(columns={i+2: name}, inplace=True)
-            #         value[name].llSeriesMeta = columns[i]
-            #         print(f'!!!! {i} {value[name].llSeriesMeta}')
-
-            # except Exception as e:
-            #     print(e)
-
-
-            # try:
-            #     for s in value:
-            #         print(f'~~~~~~{value[s].llSeriesMeta}')
-                
-            # except Exception as e:
-            #     print(e)
-
-            # todo global llType
             llType = llDesc['llType']
-
-
-            # create LLDF..
             setattr(self, llType, value)
 
     def metaOpen(self, metafile):
@@ -265,8 +166,6 @@ class LLogReader:
     
     def logOpen(self, logfile):
         return pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
-        # df = pd.read_csv(logfile,sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
-        # return LLogDataFrame(df)
 
 class LLogWriter:
     def __init__(self, meta, logfile=None, console=True):
