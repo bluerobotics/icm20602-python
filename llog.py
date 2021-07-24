@@ -68,13 +68,17 @@ class LLogSeries(pd.Series):
         
         self.plot(*args, **kwargs2)
         plt.legend()
+        # plt.title(title)
         plt.ylabel(meta.get('units'))
 
         if d2 is not None:
             plt.twinx()
             d2.pplot(*args, **kwargs)
         
-    
+        plt.grid(True)
+        plt.tight_layout()
+        plt.subplots_adjust(wspace=0.5, hspace=0.5)
+        
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
     _metadata = ['meta']
@@ -174,14 +178,16 @@ class LLogReader:
         # return pd.read_csv(logfile, sep=' ', header=None, index_col=None).dropna(axis='columns', how='all').set_index(0, drop=False)
         return pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
 
-    def figure(self, height_ratios=[1,4,4], columns=2, suptitle='hellotitle', footer='llog\nv1.0', header='header1', pagenum=0):
+    def figure(self, height_ratios=[1,4,4], columns=2, suptitle='', footer='llog\nv1.0', header='header1', pagenum=0):
         f = plt.figure(figsize=(8.5, 11.0))
-        plt.suptitle('suptitle')
+        plt.suptitle(suptitle)
         rows = len(height_ratios)
-        spec = f.add_gridspec(rows, 2, height_ratios=height_ratios)
-        plt.text(0.98, 0.98, 'header', size=8, horizontalalignment='right', verticalalignment='bottom')
-        plt.text(0.02, 0.02, 'footer', size=8)
-        return spec
+        spec = f.add_gridspec(rows, columns, height_ratios=height_ratios)
+        # plt.text(0.98, 0.98, 'header', size=8, transform=f.transFigure, horizontalalignment='right', verticalalignment='bottom')
+        # plt.text(0.02, 0.02, 'footer1', size=8, transform=f.transFigure)
+        f.text(0.98, 0.98, 'header', size=8, horizontalalignment='right', verticalalignment='bottom')
+        f.text(0.02, 0.02, 'footer1', size=8)
+        return f, spec
 
 class LLogWriter:
     def __init__(self, meta, logfile=None, console=True):
