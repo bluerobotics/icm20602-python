@@ -24,6 +24,27 @@
         "dtype": "int",
         "color": "purple",
         "style": "o-"
+      },
+      {
+        "llabel": "gx",
+        "units": "dps",
+        "dtype": "float",
+        "color": "green",
+        "style": ".-"
+      },
+      {
+        "llabel": "gy",
+        "units": "dps",
+        "dtype": "float",
+        "color": "black",
+        "style": ".-"
+      },
+      {
+        "llabel": "gz",
+        "units": "dps",
+        "dtype": "float",
+        "color": "red",
+        "style": ".-"
       }
     ]
   },

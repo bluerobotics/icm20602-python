@@ -59,7 +59,7 @@ class LLogSeries(pd.Series):
 
         kwargs2 = kwargs | {'label': self.name}
 
-        for opt in ["color", "style", "label"]:
+        for opt in ["color", "style", "label", "colormap"]:
             try:
                 kwargs2 = kwargs2 | {opt:meta[opt]}
             except KeyError as e:
@@ -174,7 +174,7 @@ class LLogReader:
         # return pd.read_csv(logfile, sep=' ', header=None, index_col=None).dropna(axis='columns', how='all').set_index(0, drop=False)
         return pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
 
-    def figure(self, height_ratios=[1, 8, 8, 1], columns=2, suptitle='hellotitle', footer='llog\nv1.0', header='header1', pagenum=0):
+    def figure(self, height_ratios=[1,4,4], columns=2, suptitle='hellotitle', footer='llog\nv1.0', header='header1', pagenum=0):
         f = plt.figure(figsize=(8.5, 11.0))
         plt.suptitle('suptitle')
         rows = len(height_ratios)
