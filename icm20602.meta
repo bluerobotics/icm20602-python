@@ -1,0 +1,103 @@
+{
+  "0": {
+    "type": "error",
+    "columns": [
+      {
+        "name": "error message",
+        "dtype": "str"
+      }
+    ]
+  },
+  "1": {
+    "type": "data",
+    "columns": [
+      {
+        "name": "ax",
+        "units": "g",
+        "dtype": "float",
+        "color": "blue",
+        "style": "x"
+      },
+      {
+        "name": "ay",
+        "units": "g",
+        "dtype": "float",
+        "color": "purple",
+        "style": "x"
+      },
+      {
+        "name": "az",
+        "units": "g",
+        "dtype": "float",
+        "color": "green",
+        "style": "x"
+      },
+      {
+        "name": "gx",
+        "units": "dps",
+        "dtype": "float",
+        "color": "red",
+        "style": "o"
+      },
+      {
+        "name": "gy",
+        "units": "dps",
+        "dtype": "float",
+        "color": "pink",
+        "style": "o"
+      },
+      {
+        "name": "gz",
+        "units": "dps",
+        "dtype": "float",
+        "color": "orange",
+        "style": "o"
+      },
+      {
+        "name": "t",
+        "units": "C",
+        "dtype": "float",
+        "color": "yellow",
+        "style": "."
+      },
+      {
+        "name": "ax_raw",
+        "dtype": "int"
+      },
+      {
+        "name": "ay_raw",
+        "dtype": "int"
+      },
+      {
+        "name": "az_raw",
+        "dtype": "int"
+      },
+      {
+        "name": "gx_raw",
+        "dtype": "int"
+      },
+      {
+        "name": "gy_raw",
+        "dtype": "int"
+      },
+      {
+        "name": "gz_raw",
+        "dtype": "int"
+      },
+      {
+        "name": "t_raw",
+        "dtype": "int"
+      }
+    ]
+  },
+  "2": {
+    "type": "rom",
+  },
+  "3": {
+    "type": "configuration",
+  },
+  "4": {
+    "type": "calibration"
+  },
+  
+}
