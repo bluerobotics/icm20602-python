@@ -1,103 +1,102 @@
 {
   "0": {
-    "type": "error",
+    "llType": "error",
     "columns": [
       {
-        "name": "error message",
+        "llabel": "error message",
         "dtype": "str"
       }
     ]
   },
   "1": {
-    "type": "data",
+    "llType": "data",
     "columns": [
       {
-        "name": "ax",
+        "llabel": "ax",
         "units": "g",
         "dtype": "float",
         "color": "blue",
         "style": "x"
       },
       {
-        "name": "ay",
+        "llabel": "ay",
         "units": "g",
         "dtype": "float",
         "color": "purple",
         "style": "x"
       },
       {
-        "name": "az",
+        "llabel": "az",
         "units": "g",
         "dtype": "float",
         "color": "green",
         "style": "x"
       },
       {
-        "name": "gx",
+        "llabel": "gx",
         "units": "dps",
         "dtype": "float",
         "color": "red",
         "style": "o"
       },
       {
-        "name": "gy",
+        "llabel": "gy",
         "units": "dps",
         "dtype": "float",
         "color": "pink",
         "style": "o"
       },
       {
-        "name": "gz",
+        "llabel": "gz",
         "units": "dps",
         "dtype": "float",
         "color": "orange",
         "style": "o"
       },
       {
-        "name": "t",
+        "llabel": "t",
         "units": "C",
         "dtype": "float",
         "color": "yellow",
         "style": "."
       },
       {
-        "name": "ax_raw",
+        "llabel": "ax_raw",
         "dtype": "int"
       },
       {
-        "name": "ay_raw",
+        "llabel": "ay_raw",
         "dtype": "int"
       },
       {
-        "name": "az_raw",
+        "llabel": "az_raw",
         "dtype": "int"
       },
       {
-        "name": "gx_raw",
+        "llabel": "gx_raw",
         "dtype": "int"
       },
       {
-        "name": "gy_raw",
+        "llabel": "gy_raw",
         "dtype": "int"
       },
       {
-        "name": "gz_raw",
+        "llabel": "gz_raw",
         "dtype": "int"
       },
       {
-        "name": "t_raw",
+        "llabel": "t_raw",
         "dtype": "int"
       }
     ]
   },
   "2": {
-    "type": "rom",
+    "llType": "rom"
   },
   "3": {
-    "type": "configuration",
+    "llType": "configuration"
   },
   "4": {
-    "type": "calibration"
-  },
-  
+    "llType": "calibration"
+  }
 }
