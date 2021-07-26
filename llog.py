@@ -5,6 +5,14 @@ import matplotlib.pyplot as plt
 import json
 import time
 
+# https://pandas.pydata.org/pandas-docs/stable/user_guide/basics.html#custom-describe
+from functools import partial
+
+q_25 = partial(pd.Series.quantile, q=0.25)
+q_25.name = "25%"
+q_75 = partial(pd.Series.quantile, q=0.75)
+q_75.name = "75%"
+
 LLOG_ERROR = '0'
 # measurement data
 LLOG_DATA = '1'
@@ -78,6 +86,10 @@ class LLogSeries(pd.Series):
         plt.grid(True)
         plt.tight_layout()
         plt.subplots_adjust(wspace=0.5, hspace=0.5)
+    def stats(self):
+        return self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
+        # return LLogSeries(stats, meta=self.meta)
+    
         
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
@@ -143,10 +155,20 @@ class LLogDataFrame(pd.DataFrame):
             plt.twinx()
             d2.pplot(*args, **kwargs)
 
-    def table(self, *args, **kwargs):
-        plt.table(cellText=self.to_numpy(dtype=str), colLabels=self.columns, loc='bottom', cellLoc='center', bbox=[0,0,1,1])
+    def table(self, rl=False, *args, **kwargs):
+        if rl is True:
+            kwargs['rowLabels'] = self.index
+
+
+        plt.table(cellText=self.to_numpy(dtype=str), colLabels=self.columns, loc='bottom', cellLoc='center', bbox=[0,0,1,1], *args, **kwargs)
         plt.axis('off')
         plt.title(self.meta['llType'])
+        plt.tight_layout()
+        plt.subplots_adjust(wspace=0.5, hspace=0.5)
+
+    def stats(self):
+        stats = self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
+        return LLogDataFrame(stats, meta=self.meta)
 
 class LLogReader:
     def __init__(self, logfile, metafile):
@@ -178,15 +200,24 @@ class LLogReader:
         # return pd.read_csv(logfile, sep=' ', header=None, index_col=None).dropna(axis='columns', how='all').set_index(0, drop=False)
         return pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
 
-    def figure(self, height_ratios=[1,4,4], columns=2, suptitle='', footer='llog\nv1.0', header='header1', pagenum=0):
-        f = plt.figure(figsize=(8.5, 11.0))
+    def figure(self, height_ratios=[1,4,4], columns=2, suptitle='', header='', footer=''):
+        f = plt.figure(suptitle, figsize=(8.5, 11.0))
         plt.suptitle(suptitle)
+        footer_buffer_ratio = sum(height_ratios) * 0.02
+        height_ratios.append(footer_buffer_ratio)
         rows = len(height_ratios)
         spec = f.add_gridspec(rows, columns, height_ratios=height_ratios)
-        # plt.text(0.98, 0.98, 'header', size=8, transform=f.transFigure, horizontalalignment='right', verticalalignment='bottom')
-        # plt.text(0.02, 0.02, 'footer1', size=8, transform=f.transFigure)
-        f.text(0.98, 0.98, 'header', size=8, horizontalalignment='right', verticalalignment='bottom')
-        f.text(0.02, 0.02, 'footer1', size=8)
+        f.text(0.98, 0.98, header, size=8, horizontalalignment='right', verticalalignment='bottom')
+        f.text(0.98, 0.02, footer, size=8, horizontalalignment='right')
+        
+        # add a line, using our footer buffer subplot (the line is plotted in figure coords)
+        f.add_subplot(spec[-1,:])
+        plt.plot([0.35, 0.65], [0.02, 0.02], color='#2c99ce', lw=3, clip_on=False, transform=f.transFigure)
+        plt.axis('off')
+
+        # add br logo image
+        im = plt.imread('br.png')
+        f.figimage(im, 2, 2)
         return f, spec
 
 class LLogWriter:
