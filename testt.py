@@ -13,9 +13,8 @@ defaultMeta = dir_path+'/icm20602.meta'
 
 meta = 'test2.meta'
 output = 'test2.csv'
-log = ll.LLogWriter(meta, output)
+log = ll.LLogWriter(meta, output, console=False)
 
-log.log(ll.LLOG_CALIBRATION, f'                                            ')
 
 # log.log(ll.LLOG_INFO, f'infox shax cmdx')
 
@@ -23,22 +22,22 @@ for i in range(20):
     log.log(ll.LLOG_ERROR, f'error{i}')
 
 for i in range(100):
-    log.log(ll.LLOG_DATA, f'{math.sin(i/5.0)} {i*i} {2*math.sin(i/4.0)} {math.sin(i/4.0 + 2)} {math.sin(i/4.0 + 4)}')
+    log.log(ll.LLOG_DATA, f'{math.sin(i/5.0):0.2f} {i*i} {2*math.sin(i/4.0):0.2f} {math.sin(i/4.0 + 2):0.2f} {math.sin(i/4.0 + 4):0.2f}')
 
 for i in range(5):
-    log.log(ll.LLOG_ROM, f'{1.0/(i+1)} {i*100}')
+    log.log(ll.LLOG_ROM, f'{1.0/(i+1):0.6f} {i*100}')
 
 log.close()
 
+# open/read the log file
 log = ll.LLogReader(output, meta)
 
 dp = log.data['p']
 dt = log.data['t']
 dg = log.data[['gx', 'gy', 'gz']]
 
-
-header = 'testt.py report header'
-footer = 'testt.py report footer'
+header = 'test-llog.py report header'
+footer = 'test-llog.py report footer'
 f, spec = log.figure(height_ratios=[1,2,4,2], columns=3, suptitle='some data plots', header=header, footer=footer)
 
 plt.subplot(spec[0,:])
@@ -72,14 +71,11 @@ with PdfPages('test.pdf') as pdf:
     plt.subplot(spec[1])
     dg.insert(0, 'time', log.data.time)
     dg.head(20).table()
-
     pdf.savefig()
+
     f, spec = log.figure(height_ratios=[1], columns=1, suptitle='log errors', header=header, footer=footer)
     plt.subplot(spec[0])
     log.error.table()
-    # plt.plot([0, 1], [0.03, 0.03], color='blue', clip_on=False, 
-    # transform=f.transFigure)
     pdf.savefig()
-
 
 plt.show()

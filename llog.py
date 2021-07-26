@@ -16,30 +16,16 @@ q_75.name = "75%"
 LLOG_ERROR = '0'
 # measurement data
 LLOG_DATA = '1'
-# read only memory + factory calibration and serialization type information
-LLOG_ROM = '2'
 # application-specific configuration information
-LLOG_CONFIG = '3'
+LLOG_CONFIG = '2'
 # calibration data
 LLOG_CALIBRATION = '4'
+# read only memory + factory calibration and serialization type information
+LLOG_ROM = '5'
 # information/notes
-LLOG_INFO = '5'
+LLOG_INFO = '6'
+LLOG_NONE= '666'
 
-# the fields that are expected to be present in metadata
-llRequired = [
-    'name'
-]
-
-llOptional = {
-    #todo random
-    'color': 'black',
-    'marker': 'x',
-    'marker_size': 2,
-    'units': '',
-    'dtype': float
-}
-
-# https://stackoverflow.com/questions/47466255/subclassing-a-pandas-dataframe-updates
 # https://stackoverflow.com/questions/47466255/subclassing-a-pandas-dataframe-updates
 class LLogSeries(pd.Series):
     _metadata = ['meta']
@@ -53,17 +39,12 @@ class LLogSeries(pd.Series):
         return LLogDataFrame
 
     def pplot(self, d2=None, *args, **kwargs):
-        print(f'sup {self.name}')
-
         columns = self.meta['columns']
         meta = {}
         for c in columns:
-            print(c, self.name, c.get('llabel'))
             if self.name == c.get('llabel'):
-                print('got', c)
                 meta = c
                 break
-        # meta = self.meta[self.name]
 
         kwargs2 = kwargs | {'label': self.name}
 
@@ -76,7 +57,6 @@ class LLogSeries(pd.Series):
         
         self.plot(*args, **kwargs2)
         plt.legend()
-        # plt.title(title)
         plt.ylabel(meta.get('units'))
 
         if d2 is not None:
@@ -86,34 +66,31 @@ class LLogSeries(pd.Series):
         plt.grid(True)
         plt.tight_layout()
         plt.subplots_adjust(wspace=0.5, hspace=0.5)
+
     def stats(self):
         return self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
-        # return LLogSeries(stats, meta=self.meta)
-    
         
+
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
     _metadata = ['meta']
 
     def __init__(self, *args, **kwargs):
-        # grab the keyword argument that is supposed to be my_attr
         self.meta = kwargs.pop('meta', None)
-
         super().__init__(*args, **kwargs)
 
         # sometimes dataframe meta is not provided in intermediate operations
-        # if self.meta is not None:
+        # so we need to check if self.meta exists
+        # rename column index labels, and change column
+        # series types according to metadata
         if self.meta is not None:
             columns = self.meta.get('columns', [])
-
             l = min(len(columns), len(self.columns)-2)
-
             for c in range(l):
                 try:
                     dtype = columns[c]['dtype']
                     i = c+2
                     if dtype == "int":
-                        print('setting is', c, dtype)
                         self[i] = self[i].astype(int)
 
                     elif dtype == "float":
@@ -125,32 +102,25 @@ class LLogDataFrame(pd.DataFrame):
                     except Exception as e:
                         pass
                 llabel = columns[c]['llabel']
-                print(llabel)
                 self.rename(columns={c+2:llabel}, inplace=True)
                 # self[c+2].rename(llabel, inplace=True)
-
-            print("hello", columns, self.columns, len(self), len(columns))
-            for c in self.columns:
-                print(self[c])
 
     @property
     def _constructor(self):
         def _c(*args, **kwargs):
             df = LLogDataFrame(*args, meta=self.meta, **kwargs)
-            # df = LLogDataFrame(*args, meta=self.meta, index=None, **kwargs)
             return df
         return _c
         
     @property
     def _constructor_sliced(self):
-        print('ldsliced')
         return LLogSeries
 
     def pplot(self, *args, **kwargs):
         d2 = kwargs.pop('d2', None)
         for c in self:
             self[c].pplot(*args, **kwargs)
-        # plot things on secondary axis
+        # plot d2 dataframe on secondary axis
         if d2 is not None:
             plt.twinx()
             d2.pplot(*args, **kwargs)
@@ -158,8 +128,6 @@ class LLogDataFrame(pd.DataFrame):
     def table(self, rl=False, *args, **kwargs):
         if rl is True:
             kwargs['rowLabels'] = self.index
-
-
         plt.table(cellText=self.to_numpy(dtype=str), colLabels=self.columns, loc='bottom', cellLoc='center', bbox=[0,0,1,1], *args, **kwargs)
         plt.axis('off')
         plt.title(self.meta['llType'])
@@ -170,35 +138,26 @@ class LLogDataFrame(pd.DataFrame):
         stats = self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
         return LLogDataFrame(stats, meta=self.meta)
 
+
 class LLogReader:
     def __init__(self, logfile, metafile):
-        self.df = self.logOpen(logfile)
-        self.meta = self.metaOpen(metafile)
+        self.df = pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        with open(metafile, 'r') as f:
+            self.meta = json.load(f)
 
         # todo move this to LLogDataFrame constructor
+        # or remove these columns from the logdataframe completely
         self.df.rename(columns={0:'time', 1:'llKey'}, inplace=True)
         self.df['llKey'] = self.df['llKey'].astype(int)
 
         for llKey, llDesc in self.meta.items():
             DF = self.df
-
             value = DF[DF['llKey'] == int(llKey)].dropna(axis='columns', how='all')
-
-            # eg for each type name in log, set self.type to
+            # eg for each llType name in log, set self.type to
             # the dataframe representing only that type
-            print(llKey, llDesc)
             value = LLogDataFrame(value, meta=llDesc)
-            
             llType = llDesc['llType']
             setattr(self, llType, value)
-
-    def metaOpen(self, metafile):
-        with open(metafile, 'r') as f:
-            return json.load(f)
-    
-    def logOpen(self, logfile):
-        # return pd.read_csv(logfile, sep=' ', header=None, index_col=None).dropna(axis='columns', how='all').set_index(0, drop=False)
-        return pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
 
     def figure(self, height_ratios=[1,4,4], columns=2, suptitle='', header='', footer=''):
         f = plt.figure(suptitle, figsize=(8.5, 11.0))
@@ -220,32 +179,30 @@ class LLogReader:
         f.figimage(im, 2, 2)
         return f, spec
 
+
 class LLogWriter:
-    def __init__(self, meta, logfile=None, console=True):
-        self.meta = self.metaOpen(meta)
+    def __init__(self, metafile, logfile=None, console=True):
+        with open(metafile, 'r') as f:
+            self.meta = json.load(f)
         self.logfile = logfile
         self.console = console
 
         if self.logfile:
+            # todo error if it exists
             self.logfile = open(self.logfile, 'w')
+            # this is a hack
+            # pandas will have an error if any row has
+            # fewer columns than the first row
+            self.log(LLOG_NONE, '                                                 ')
 
     def log(self, type, data):
         t = time.time()
-        try:
-            llType = self.meta[type]
-        except Exception as e:
-            raise e
-
         logstring = f'{t:.6f} {type} {data}\n'
         if self.console:
             print(logstring, end='')
         if self.logfile:
             self.logfile.write(logstring)
-        
+
     def close(self):
         if self.logfile:
             self.logfile.close()
-
-    def metaOpen(self, metafile):
-        with open(metafile, 'r') as f:
-            return json.load(f)
