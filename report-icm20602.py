@@ -25,7 +25,7 @@ t = log.data.t
 pdf = None
 if args.output:
     outfile = open('icm20602.pdf', 'wb')
-    pdf = PdfPages(outfile)
+    pdf = PdfPages(outfile, metadata=log.meta)
 
 def saveFig():
     if pdf:
