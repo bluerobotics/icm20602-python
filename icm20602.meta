@@ -89,14 +89,5 @@
         "dtype": "int"
       }
     ]
-  },
-  "2": {
-    "llType": "rom"
-  },
-  "3": {
-    "llType": "configuration"
-  },
-  "4": {
-    "llType": "calibration"
   }
 }
