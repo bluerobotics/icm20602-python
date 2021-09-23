@@ -27,21 +27,14 @@ def generate_figures(log):
     plt.subplot(spec[2,:])
     t.pplot()
 
+DEVICE = 'icm20602'
 
 def main():
     import argparse
     from llog import LLogReader
     from matplotlib.backends.backend_pdf import PdfPages
-    import os
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-
-    defaultMeta = dir_path + '/icm20602.meta'
-    parser = argparse.ArgumentParser(description='icm20602 test report')
-    parser.add_argument('--input', action='store', type=str, required=True)
-    parser.add_argument('--meta', action='store', type=str, default=defaultMeta)
-    parser.add_argument('--output', action='store', type=str)
-    parser.add_argument('--show', action='store_true')
+    parser = LLogReader.create_default_parser(__file__, DEVICE)
     args = parser.parse_args()
 
     log = LLogReader(args.input, args.meta)
