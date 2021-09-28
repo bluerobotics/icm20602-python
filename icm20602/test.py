@@ -8,7 +8,7 @@ device = "icm20602"
 parser = LLogWriter.create_default_parser(__file__, device)
 args = parser.parse_args()
 
-with llog.LLogWriter(args.meta, args.output) as log:
+with LLogWriter(args.meta, args.output) as log:
     icm = ICM20602()
     
     def data_getter():
