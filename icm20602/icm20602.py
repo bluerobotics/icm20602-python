@@ -95,7 +95,7 @@ class ICM20602(object):
     REG_ZA_OFFSET_H = 0x7D
     REG_ZA_OFFSET_L = 0x7E
 
-    def __init__(self, bus=1):
+    def __init__(self, bus=1, cs=2):
 
         # gyro digital low pass filter configuration parameters
         # see register 26 documentation
@@ -120,8 +120,8 @@ class ICM20602(object):
         self.i2c = False
 
         self._bus = spidev.SpiDev()
-        self._bus.open(1, 2)
-        self._bus.max_speed_hz = 4000000
+        self._bus.open(bus, cs)
+        self._bus.max_speed_hz = 10000000
 
         print("reset", self.reset())
         self._id = self.read_id()
