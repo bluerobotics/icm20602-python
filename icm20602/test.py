@@ -9,7 +9,7 @@ def main():
     parser = LLogWriter.create_default_parser(__file__, device)
     args = parser.parse_args()
 
-    with LLogWriter(args.meta, args.output) as log:
+    with LLogWriter(args.meta, args.output, console=args.console) as log:
         icm = ICM20602()
 
         def data_getter():
